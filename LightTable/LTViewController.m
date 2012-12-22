@@ -26,7 +26,8 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 @property (nonatomic, strong) UIPanGestureRecognizer *panRecognizer;
 @property (nonatomic, strong) UIRotationGestureRecognizer *rotationRecognizer;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinchRecognizer;
-@property (nonatomic, strong) UITapGestureRecognizer *tapRecognizer;
+@property (nonatomic, strong) UITapGestureRecognizer *doubleTapRecognizer;
+@property (nonatomic, strong) UITapGestureRecognizer *mainViewDoubleTapRecognizer;
 @property (nonatomic, strong) ALAssetsLibrary *library;
 @property (nonatomic) CGPoint scaleCenter;
 @property (nonatomic) CGPoint touchCenter;
@@ -42,9 +43,11 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     _panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     _rotationRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
     _pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
-    _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
+    _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
+    _mainViewDoubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
 
-    _tapRecognizer.numberOfTapsRequired = 2;
+    _doubleTapRecognizer.numberOfTapsRequired = 2;
+    _mainViewDoubleTapRecognizer.numberOfTapsRequired = 2;
 
     _panRecognizer.delegate = self;
     _pinchRecognizer.delegate = self;
@@ -52,7 +55,8 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     [_imageView addGestureRecognizer:_panRecognizer];
     [_imageView addGestureRecognizer:_rotationRecognizer];
     [_imageView addGestureRecognizer:_pinchRecognizer];
-    [_imageView addGestureRecognizer:_tapRecognizer];
+    [_imageView addGestureRecognizer:_doubleTapRecognizer];
+    [self.view addGestureRecognizer:_mainViewDoubleTapRecognizer];
 
     self.library = [[ALAssetsLibrary alloc] init];
 
