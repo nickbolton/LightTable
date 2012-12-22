@@ -13,8 +13,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" id="Thu-d9-qLt">
+                            <imageView contentMode="scaleToFill" id="EuT-S7-0Mg">
                                 <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <view contentMode="scaleToFill" id="61N-mR-7wJ">
                                 <rect key="frame" x="0.0" y="415" width="768" height="195"/>
@@ -60,7 +61,8 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="imageView" destination="Thu-d9-qLt" id="hm3-AN-cqd"/>
+                        <outlet property="imageView" destination="EuT-S7-0Mg" id="Hlj-0b-Z9i"/>
+                        <outlet property="photoButton" destination="SJP-pY-u5M" id="XoS-mE-K2u"/>
                         <outlet property="selectionContainer" destination="61N-mR-7wJ" id="3id-ML-TO6"/>
                     </connections>
                 </viewController>
@@ -71,7 +73,6 @@
         <!--Selection View Controller-->
         <scene sceneID="AqZ-Bh-zvX">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="65C-Bk-0v4" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="LTSelectionViewController" id="ZIt-fK-O71" customClass="LTSelectionViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="81H-UQ-heG">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
@@ -82,6 +83,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="65C-Bk-0v4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="350" y="-211"/>
         </scene>
@@ -93,6 +95,7 @@
                 <relationship kind="action" name="blank:"/>
                 <relationship kind="action" name="selectPhoto:"/>
                 <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="photoButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="selectionContainer" candidateClass="UIView"/>
             </relationships>
         </class>

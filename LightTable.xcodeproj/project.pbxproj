@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FE351C6316865AA9000FB0DE /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE351C6216865AA9000FB0DE /* AssetsLibrary.framework */; };
 		FE9DBCC316794E73009E5B75 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE9DBCC216794E73009E5B75 /* UIKit.framework */; };
 		FE9DBCC516794E73009E5B75 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE9DBCC416794E73009E5B75 /* Foundation.framework */; };
 		FE9DBCC716794E73009E5B75 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE9DBCC616794E73009E5B75 /* CoreGraphics.framework */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FE351C6216865AA9000FB0DE /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		FE9DBCBE16794E73009E5B75 /* LightTable.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightTable.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE9DBCC216794E73009E5B75 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FE9DBCC416794E73009E5B75 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -44,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE351C6316865AA9000FB0DE /* AssetsLibrary.framework in Frameworks */,
 				FE9DBCC316794E73009E5B75 /* UIKit.framework in Frameworks */,
 				FE9DBCC516794E73009E5B75 /* Foundation.framework in Frameworks */,
 				FE9DBCC716794E73009E5B75 /* CoreGraphics.framework in Frameworks */,
@@ -53,10 +56,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FE351C6616865DE5000FB0DE /* images */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = images;
+			sourceTree = "<group>";
+		};
+		FE535C52168657BD0044BC70 /* Externals */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Externals;
+			sourceTree = "<group>";
+		};
 		FE9DBCB316794E72009E5B75 = {
 			isa = PBXGroup;
 			children = (
 				FE9DBCC816794E73009E5B75 /* LightTable */,
+				FE535C52168657BD0044BC70 /* Externals */,
 				FE9DBCC116794E73009E5B75 /* Frameworks */,
 				FE9DBCBF16794E73009E5B75 /* Products */,
 			);
@@ -73,6 +91,7 @@
 		FE9DBCC116794E73009E5B75 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FE351C6216865AA9000FB0DE /* AssetsLibrary.framework */,
 				FE9DBCC216794E73009E5B75 /* UIKit.framework */,
 				FE9DBCC416794E73009E5B75 /* Foundation.framework */,
 				FE9DBCC616794E73009E5B75 /* CoreGraphics.framework */,
@@ -88,6 +107,7 @@
 				FE9DBCDA16794E73009E5B75 /* MainStoryboard.storyboard */,
 				FE9DBCDD16794E73009E5B75 /* LTViewController.h */,
 				FE9DBCDE16794E73009E5B75 /* LTViewController.m */,
+				FE351C6616865DE5000FB0DE /* images */,
 				FE9DBCC916794E73009E5B75 /* Supporting Files */,
 			);
 			path = LightTable;
