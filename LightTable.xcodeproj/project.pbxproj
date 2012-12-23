@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		FE351C6316865AA9000FB0DE /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE351C6216865AA9000FB0DE /* AssetsLibrary.framework */; };
+		FE351C7116868853000FB0DE /* sliderMaxMin-02.png in Resources */ = {isa = PBXBuildFile; fileRef = FE351C6C16868853000FB0DE /* sliderMaxMin-02.png */; };
+		FE351C7216868853000FB0DE /* sliderThumb.png in Resources */ = {isa = PBXBuildFile; fileRef = FE351C6D16868853000FB0DE /* sliderThumb.png */; };
+		FE351C7316868853000FB0DE /* sliderTrack.png in Resources */ = {isa = PBXBuildFile; fileRef = FE351C6E16868853000FB0DE /* sliderTrack.png */; };
+		FE351C7416868853000FB0DE /* SlideToCancelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE351C7016868853000FB0DE /* SlideToCancelViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -w -Xanalyzer -analyzer-disable-checker"; }; };
+		FE351C82168699F4000FB0DE /* UIAlertView+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = FE351C81168699F4000FB0DE /* UIAlertView+Utilities.m */; };
 		FE9DBCC316794E73009E5B75 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE9DBCC216794E73009E5B75 /* UIKit.framework */; };
 		FE9DBCC516794E73009E5B75 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE9DBCC416794E73009E5B75 /* Foundation.framework */; };
 		FE9DBCC716794E73009E5B75 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE9DBCC616794E73009E5B75 /* CoreGraphics.framework */; };
@@ -23,6 +28,13 @@
 
 /* Begin PBXFileReference section */
 		FE351C6216865AA9000FB0DE /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		FE351C6C16868853000FB0DE /* sliderMaxMin-02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sliderMaxMin-02.png"; sourceTree = "<group>"; };
+		FE351C6D16868853000FB0DE /* sliderThumb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sliderThumb.png; sourceTree = "<group>"; };
+		FE351C6E16868853000FB0DE /* sliderTrack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sliderTrack.png; sourceTree = "<group>"; };
+		FE351C6F16868853000FB0DE /* SlideToCancelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideToCancelViewController.h; sourceTree = "<group>"; };
+		FE351C7016868853000FB0DE /* SlideToCancelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideToCancelViewController.m; sourceTree = "<group>"; };
+		FE351C80168699F4000FB0DE /* UIAlertView+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Utilities.h"; sourceTree = "<group>"; };
+		FE351C81168699F4000FB0DE /* UIAlertView+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Utilities.m"; sourceTree = "<group>"; };
 		FE9DBCBE16794E73009E5B75 /* LightTable.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightTable.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE9DBCC216794E73009E5B75 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FE9DBCC416794E73009E5B75 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -63,9 +75,43 @@
 			name = images;
 			sourceTree = "<group>";
 		};
+		FE351C6B16868853000FB0DE /* SlideToCancel */ = {
+			isa = PBXGroup;
+			children = (
+				FE351C6C16868853000FB0DE /* sliderMaxMin-02.png */,
+				FE351C6D16868853000FB0DE /* sliderThumb.png */,
+				FE351C6E16868853000FB0DE /* sliderTrack.png */,
+				FE351C6F16868853000FB0DE /* SlideToCancelViewController.h */,
+				FE351C7016868853000FB0DE /* SlideToCancelViewController.m */,
+			);
+			path = SlideToCancel;
+			sourceTree = "<group>";
+		};
+		FE351C7E168699DA000FB0DE /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				FE351C80168699F4000FB0DE /* UIAlertView+Utilities.h */,
+				FE351C81168699F4000FB0DE /* UIAlertView+Utilities.m */,
+			);
+			name = Categories;
+			sourceTree = "<group>";
+		};
+		FE351C7F168699E4000FB0DE /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				FE9DBCD116794E73009E5B75 /* LTAppDelegate.h */,
+				FE9DBCD216794E73009E5B75 /* LTAppDelegate.m */,
+				FE9DBCDA16794E73009E5B75 /* MainStoryboard.storyboard */,
+				FE9DBCDD16794E73009E5B75 /* LTViewController.h */,
+				FE9DBCDE16794E73009E5B75 /* LTViewController.m */,
+			);
+			name = Main;
+			sourceTree = "<group>";
+		};
 		FE535C52168657BD0044BC70 /* Externals */ = {
 			isa = PBXGroup;
 			children = (
+				FE351C6B16868853000FB0DE /* SlideToCancel */,
 			);
 			path = Externals;
 			sourceTree = "<group>";
@@ -102,11 +148,8 @@
 		FE9DBCC816794E73009E5B75 /* LightTable */ = {
 			isa = PBXGroup;
 			children = (
-				FE9DBCD116794E73009E5B75 /* LTAppDelegate.h */,
-				FE9DBCD216794E73009E5B75 /* LTAppDelegate.m */,
-				FE9DBCDA16794E73009E5B75 /* MainStoryboard.storyboard */,
-				FE9DBCDD16794E73009E5B75 /* LTViewController.h */,
-				FE9DBCDE16794E73009E5B75 /* LTViewController.m */,
+				FE351C7F168699E4000FB0DE /* Main */,
+				FE351C7E168699DA000FB0DE /* Categories */,
 				FE351C6616865DE5000FB0DE /* images */,
 				FE9DBCC916794E73009E5B75 /* Supporting Files */,
 			);
@@ -184,6 +227,9 @@
 				FE9DBCD716794E73009E5B75 /* Default@2x.png in Resources */,
 				FE9DBCD916794E73009E5B75 /* Default-568h@2x.png in Resources */,
 				FE9DBCDC16794E73009E5B75 /* MainStoryboard.storyboard in Resources */,
+				FE351C7116868853000FB0DE /* sliderMaxMin-02.png in Resources */,
+				FE351C7216868853000FB0DE /* sliderThumb.png in Resources */,
+				FE351C7316868853000FB0DE /* sliderTrack.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,6 +243,8 @@
 				FE9DBCCF16794E73009E5B75 /* main.m in Sources */,
 				FE9DBCD316794E73009E5B75 /* LTAppDelegate.m in Sources */,
 				FE9DBCDF16794E73009E5B75 /* LTViewController.m in Sources */,
+				FE351C7416868853000FB0DE /* SlideToCancelViewController.m in Sources */,
+				FE351C82168699F4000FB0DE /* UIAlertView+Utilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

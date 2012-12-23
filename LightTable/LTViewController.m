@@ -6,8 +6,10 @@
 //  Copyright (c) 2012 Pixelbleed. All rights reserved.
 //
 
-#import "LTViewController.h"
 #import <AssetsLibrary/AssetsLibrary.h>
+#import "LTViewController.h"
+#import "SlideToCancelViewController.h"
+#import "UIAlertView+Utilities.h"
 
 NSString * const kLTLastImagePathKey = @"last-image-path";
 NSString * const kLTLastImageTransformAKey = @"last-image-a";
@@ -18,21 +20,25 @@ NSString * const kLTLastImageTransformXKey = @"last-image-x";
 NSString * const kLTLastImageTransformYKey = @"last-image-y";
 
 @interface LTViewController () <
-UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverControllerDelegate, UIActionSheetDelegate, UIGestureRecognizerDelegate> {
+UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverControllerDelegate, UIActionSheetDelegate, UIGestureRecognizerDelegate, SlideToCancelDelegate> {
 
+    BOOL _locked;
+    BOOL _landscape;
 }
 
 @property (nonatomic, strong) UIPopoverController *imageSelectionPopoverController;
 @property (nonatomic, strong) UIPanGestureRecognizer *panRecognizer;
 @property (nonatomic, strong) UIRotationGestureRecognizer *rotationRecognizer;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinchRecognizer;
+@property (nonatomic, strong) UITapGestureRecognizer *tapRecognizer;
+@property (nonatomic, strong) UITapGestureRecognizer *mainViewTapRecognizer;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapRecognizer;
 @property (nonatomic, strong) UITapGestureRecognizer *mainViewDoubleTapRecognizer;
 @property (nonatomic, strong) ALAssetsLibrary *library;
 @property (nonatomic) CGPoint scaleCenter;
 @property (nonatomic) CGPoint touchCenter;
 @property (nonatomic) CGPoint rotationCenter;
-
+@property (nonatomic, strong) SlideToCancelViewController *slideToCancel;
 @end
 
 @implementation LTViewController
@@ -40,11 +46,23 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    _slideToCancel = [[SlideToCancelViewController alloc] init];
+    _slideToCancel.delegate = self;
+    _slideToCancel.forwardText = NSLocalizedString(@"Slide to lock", nil);
+    _slideToCancel.reverseText = NSLocalizedString(@"Slide to unlock", nil);
+
+    [self.view addSubview:_slideToCancel.view];
+
     _panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     _rotationRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
     _pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+    _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+    _mainViewTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
     _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
     _mainViewDoubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
+
+    [_tapRecognizer requireGestureRecognizerToFail:_doubleTapRecognizer];
+    [_mainViewTapRecognizer requireGestureRecognizerToFail:_mainViewDoubleTapRecognizer];
 
     _doubleTapRecognizer.numberOfTapsRequired = 2;
     _mainViewDoubleTapRecognizer.numberOfTapsRequired = 2;
@@ -55,6 +73,8 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     [_imageView addGestureRecognizer:_panRecognizer];
     [_imageView addGestureRecognizer:_rotationRecognizer];
     [_imageView addGestureRecognizer:_pinchRecognizer];
+    [_imageView addGestureRecognizer:_tapRecognizer];
+    [_imageView addGestureRecognizer:_mainViewTapRecognizer];
     [_imageView addGestureRecognizer:_doubleTapRecognizer];
     [self.view addGestureRecognizer:_mainViewDoubleTapRecognizer];
 
@@ -110,6 +130,82 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
             removeLastImageBlock();
         }
     }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+
+    CGRect sliderFrame = _slideToCancel.view.frame;
+
+    _landscape = UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation);
+
+    if (_landscape) {
+        sliderFrame.origin.y = CGRectGetWidth(self.view.frame) - CGRectGetHeight(sliderFrame);
+        sliderFrame.size.width = CGRectGetHeight(self.view.frame);
+    } else {
+        sliderFrame.origin.y = CGRectGetHeight(self.view.frame) - CGRectGetHeight(sliderFrame);
+        sliderFrame.size.width = CGRectGetWidth(self.view.frame);
+    }
+
+    _slideToCancel.view.frame = sliderFrame;
+    _slideToCancel.enabled = YES;
+
+    static NSString *hintKey = @"kLTMultitaskingGesturesHintKey";
+
+    [UIAlertView
+     showHint:hintKey
+     title:NSLocalizedString(@"Multitasking Gestures", nil)
+     message:NSLocalizedString(@"This app works best if Multitasking Gestures are turned off. You can find the setting in the General section of System Preferences.", nil)];
+}
+
+- (UIView *)rotatingFooterView {
+    return _slideToCancel.view;
+}
+
+//- (BOOL)shouldAutorotate {
+//    return YES;
+//}
+//
+//- (NSUInteger)supportedInterfaceOrientations {
+//    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+//}
+//
+//- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
+//    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
+//}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    if (_slideToCancel.view.alpha > 0.0f) {
+
+        CGFloat ypos;
+
+        CGRect sliderFrame = _slideToCancel.view.frame;
+
+        if (_landscape) {
+            ypos = CGRectGetHeight(self.view.frame) - CGRectGetHeight(sliderFrame);
+        } else {
+            ypos = CGRectGetWidth(self.view.frame) - CGRectGetHeight(sliderFrame);
+        }
+
+        sliderFrame.origin.y = ypos;
+
+        [UIView
+         animateWithDuration:duration
+         animations:^{
+             _slideToCancel.view.frame = sliderFrame;
+         }];
+    }
+
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    _landscape = UIDeviceOrientationIsLandscape(fromInterfaceOrientation) == NO;
+
+    BOOL enabled = _slideToCancel.enabled;
+
+    _slideToCancel.enabled = YES;
+
+    _slideToCancel.enabled = enabled;
 }
 
 - (void)didReceiveMemoryWarning
@@ -177,9 +273,18 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     [touches enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
         UITouch *touch = (UITouch*)obj;
         CGPoint touchLocation = [touch locationInView:self.imageView];
-        self.touchCenter = CGPointMake(self.touchCenter.x + touchLocation.x, self.touchCenter.y +touchLocation.y);
+        if (_landscape) {
+            self.touchCenter = CGPointMake(self.touchCenter.y + touchLocation.y, self.touchCenter.x +touchLocation.x);
+        } else {
+            self.touchCenter = CGPointMake(self.touchCenter.x + touchLocation.x, self.touchCenter.y +touchLocation.y);
+        }
     }];
-    self.touchCenter = CGPointMake(self.touchCenter.x/touches.count, self.touchCenter.y/touches.count);
+
+    if (_landscape) {
+        self.touchCenter = CGPointMake(self.touchCenter.y/touches.count, self.touchCenter.x/touches.count);
+    } else {
+        self.touchCenter = CGPointMake(self.touchCenter.x/touches.count, self.touchCenter.y/touches.count);
+    }
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -358,6 +463,45 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     return self.imageView.transform.ty;
 }
 
+- (void)handleTap:(UITapGestureRecognizer *)gesture {
+
+    CGFloat ypos;
+    CGFloat alpha;
+
+    if (_slideToCancel.view.alpha > 0.0f) {
+
+        ypos = CGRectGetMaxY(_slideToCancel.view.frame);
+
+        alpha = 0.0f;
+    } else {
+
+        CGRect sliderFrame = _slideToCancel.view.frame;
+
+        if (_landscape) {
+            ypos = CGRectGetWidth(self.view.frame) - CGRectGetHeight(sliderFrame);
+        } else {
+            ypos = CGRectGetHeight(self.view.frame) - CGRectGetHeight(sliderFrame);
+        }
+
+        sliderFrame.origin.y = CGRectGetMaxY(_slideToCancel.view.frame);
+        _slideToCancel.view.frame = sliderFrame;
+        _slideToCancel.view.alpha = 1.0f;
+
+        alpha = 1.0f;
+    }
+
+    CGRect frame = _slideToCancel.view.frame;
+    frame.origin.y = ypos;
+
+    [UIView
+     animateWithDuration:.15f
+     animations:^{
+         _slideToCancel.view.frame = frame;
+     } completion:^(BOOL finished) {
+         _slideToCancel.view.alpha = alpha;
+     }];
+}
+
 - (void)handleDoubleTap:(UITapGestureRecognizer *)recognizer {
     [self reset:YES];
 }
@@ -388,6 +532,46 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
         [actionSheet showInView:self.view];
     }
 
+}
+
+#pragma mark - SlideToCancelDelegate Conformance
+
+- (void)sliderReachedForwardPosition {
+
+    _locked = YES;
+
+    for (UIGestureRecognizer *gesture in self.view.gestureRecognizers) {
+        if (gesture != _mainViewTapRecognizer) {
+            gesture.enabled = NO;
+        }
+    }
+
+    for (UIGestureRecognizer *gesture in _imageView.gestureRecognizers) {
+        if (gesture != _tapRecognizer) {
+            gesture.enabled = NO;
+        }
+    }
+
+    [UIView
+     animateWithDuration:.3f
+     animations:^{
+         _slideToCancel.view.alpha = 0.0f;
+     } completion:^(BOOL finished) {
+         _slideToCancel.reversed = YES;
+     }];
+}
+
+- (void)sliderReachedReversePosition {
+    _locked = NO;
+    _slideToCancel.reversed = NO;
+
+    for (UIGestureRecognizer *gesture in self.view.gestureRecognizers) {
+        gesture.enabled = YES;
+    }
+
+    for (UIGestureRecognizer *gesture in _imageView.gestureRecognizers) {
+        gesture.enabled = YES;
+    }
 }
 
 #pragma mark - UIActionSheetDelegate Conformance
