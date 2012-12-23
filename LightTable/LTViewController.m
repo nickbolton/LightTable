@@ -9,6 +9,7 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "LTViewController.h"
 #import "SlideToCancelViewController.h"
+#import "LTEdgeDetector.h"
 #import "UIAlertView+Utilities.h"
 
 NSString * const kLTLastImagePathKey = @"last-image-path";
@@ -18,6 +19,7 @@ NSString * const kLTLastImageTransformCKey = @"last-image-c";
 NSString * const kLTLastImageTransformDKey = @"last-image-d";
 NSString * const kLTLastImageTransformXKey = @"last-image-x";
 NSString * const kLTLastImageTransformYKey = @"last-image-y";
+NSString * const kLTLastImageEdgeKey = @"last-image-edge";
 
 @interface LTViewController () <
 UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverControllerDelegate, UIActionSheetDelegate, UIGestureRecognizerDelegate, SlideToCancelDelegate> {
@@ -34,7 +36,11 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 @property (nonatomic, strong) UITapGestureRecognizer *mainViewTapRecognizer;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapRecognizer;
 @property (nonatomic, strong) UITapGestureRecognizer *mainViewDoubleTapRecognizer;
+@property (nonatomic, strong) UITapGestureRecognizer *edgeRecognizer;
+@property (nonatomic, strong) UITapGestureRecognizer *selectionRecognizer;
+@property (nonatomic, strong) UITapGestureRecognizer *mainViewSelectionRecognizer;
 @property (nonatomic, strong) ALAssetsLibrary *library;
+@property (nonatomic, strong) UIImage *originalImage;
 @property (nonatomic) CGPoint scaleCenter;
 @property (nonatomic) CGPoint touchCenter;
 @property (nonatomic) CGPoint rotationCenter;
@@ -61,6 +67,18 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
     _mainViewDoubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
 
+    _edgeRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(edgeDetection:)];
+    _edgeRecognizer.numberOfTouchesRequired = 2;
+    _edgeRecognizer.numberOfTapsRequired = 2;
+
+    _selectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showSelection:)];
+    _selectionRecognizer.numberOfTouchesRequired = 3;
+    _selectionRecognizer.numberOfTapsRequired = 3;
+
+    _mainViewSelectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showSelection:)];
+    _mainViewSelectionRecognizer.numberOfTouchesRequired = 3;
+    _mainViewSelectionRecognizer.numberOfTapsRequired = 3;
+
     [_tapRecognizer requireGestureRecognizerToFail:_doubleTapRecognizer];
     [_mainViewTapRecognizer requireGestureRecognizerToFail:_mainViewDoubleTapRecognizer];
 
@@ -74,22 +92,27 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     [_imageView addGestureRecognizer:_rotationRecognizer];
     [_imageView addGestureRecognizer:_pinchRecognizer];
     [_imageView addGestureRecognizer:_tapRecognizer];
-    [_imageView addGestureRecognizer:_mainViewTapRecognizer];
     [_imageView addGestureRecognizer:_doubleTapRecognizer];
+    [_imageView addGestureRecognizer:_edgeRecognizer];
+    [_imageView addGestureRecognizer:_selectionRecognizer];
+    
+    [self.view addGestureRecognizer:_mainViewTapRecognizer];
     [self.view addGestureRecognizer:_mainViewDoubleTapRecognizer];
+    [self.view addGestureRecognizer:_mainViewSelectionRecognizer];
 
     self.library = [[ALAssetsLibrary alloc] init];
 
     NSString *lastImagePath =
     [[NSUserDefaults standardUserDefaults]
      stringForKey:kLTLastImagePathKey];
-    
 
     void (^removeLastImageBlock)(void) = ^{
         [[NSUserDefaults standardUserDefaults]
          removeObjectForKey:kLTLastImagePathKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
     };
+
+    _edgeControlsContainer.alpha = 0.0f;
 
     if (lastImagePath.length > 0) {
 
@@ -106,11 +129,22 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
                     if (iref) {
 
                         _selectionContainer.alpha = 0.0f;
-                        UIImage *image = [UIImage imageWithCGImage:iref scale:1.0f orientation:rep.orientation];;
+                        UIImage *image = [UIImage imageWithCGImage:iref scale:1.0f orientation:(UIImageOrientation)rep.orientation];;
 
                         self.imageView.image = image;
+                        self.originalImage = image;
 
                         [self updateImageTransform];
+
+                        BOOL edgeDetectionOn =
+                        [[NSUserDefaults standardUserDefaults]
+                         boolForKey:kLTLastImageEdgeKey];
+
+                        _edgeControlsContainer.alpha = edgeDetectionOn ? 1.0f : 0.0f;
+
+                        if (edgeDetectionOn) {
+                            [self updateEdgeDetectionImage];
+                        }
 
                     } else {
                         removeLastImageBlock();
@@ -199,7 +233,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-    _landscape = UIDeviceOrientationIsLandscape(fromInterfaceOrientation) == NO;
+    _landscape = UIDeviceOrientationIsLandscape((UIDeviceOrientation)fromInterfaceOrientation) == NO;
 
     BOOL enabled = _slideToCancel.enabled;
 
@@ -219,12 +253,41 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     [UIView
      animateWithDuration:.15f
      animations:^{
+         _imageView.alpha = 0.0f;
          _selectionContainer.alpha = 0.0f;
+     } completion:^(BOOL finished) {
+
+         _imageView.image = nil;
+
+         [[NSUserDefaults standardUserDefaults]
+          removeObjectForKey:kLTLastImagePathKey];
+
+         [self removeImageTransformValues];
+         [self reset:NO];
+
+         _imageView.alpha = 1.0f;
      }];
 }
 
 - (IBAction)selectPhoto:(id)sender {
-    [self selectPhoto];
+
+    [UIView
+     animateWithDuration:.15f
+     animations:^{
+         _imageView.alpha = 0.0f;
+         _selectionContainer.alpha = 0.0f;
+     } completion:^(BOOL finished) {
+
+         _imageView.image = nil;
+
+         [self removeImageTransformValues];
+         [self reset:NO];
+
+         _imageView.alpha = 1.0f;
+
+         [self selectPhoto];
+     }];
+
 }
 
 -(void)reset:(BOOL)animated {
@@ -502,8 +565,70 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
      }];
 }
 
+- (void)showSelection:(UITapGestureRecognizer *)gesture {
+
+    [UIView
+     animateWithDuration:.15f
+     animations:^{
+         _selectionContainer.alpha = 1.0f;
+     }];
+}
+
 - (void)handleDoubleTap:(UITapGestureRecognizer *)recognizer {
     [self reset:YES];
+}
+
+- (IBAction)edgeLowThresholdChanged:(id)sender {
+    _edgeLowThresholdLabel.text =
+    [NSString stringWithFormat:@"Thres: %.1f", _edgeLowThresholdSlider.value];
+    [self updateEdgeDetectionImage];
+}
+
+- (void)edgeDetection:(UITapGestureRecognizer *)recognizer {
+
+    BOOL edgeDetectionOn =
+    [[NSUserDefaults standardUserDefaults]
+     boolForKey:kLTLastImageEdgeKey];
+
+    CGFloat controlsAlpha;
+
+    if (edgeDetectionOn) {
+
+        // turning off
+
+        controlsAlpha = 0.0f;
+
+        _imageView.image = self.originalImage;
+
+    } else {
+
+        // turning on
+
+        controlsAlpha = 1.0f;
+
+        [self updateEdgeDetectionImage];
+
+    }
+
+    [UIView
+     animateWithDuration:.15f
+     animations:^{
+         _edgeControlsContainer.alpha = controlsAlpha;
+     }];
+
+    [[NSUserDefaults standardUserDefaults]
+     setBool:!edgeDetectionOn forKey:kLTLastImageEdgeKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)updateEdgeDetectionImage {
+    
+    UIImage *updatedImage =
+    [[LTEdgeDetector sharedInstance]
+     applyEdgeDetection:_originalImage
+     lowThreshold:_edgeLowThresholdSlider.value];
+
+    _imageView.image = updatedImage;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
@@ -641,14 +766,21 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
          NSURL *assetURL = [info objectForKey:UIImagePickerControllerReferenceURL];
 
          self.imageView.image = image;
+         self.originalImage = image;
+
+         [[NSUserDefaults standardUserDefaults]
+          removeObjectForKey:kLTLastImageEdgeKey];
 
          if (assetURL == nil) {
 
              [self.library
               writeImageToSavedPhotosAlbum:[image CGImage]
-              orientation:image.imageOrientation
+              orientation:(ALAssetOrientation)image.imageOrientation
               completionBlock:^(NSURL *assetURL, NSError *error){
                   if (error) {
+
+                      [[NSUserDefaults standardUserDefaults] synchronize];
+
                       UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error Saving"
                                                                       message:[error localizedDescription]
                                                                      delegate:nil

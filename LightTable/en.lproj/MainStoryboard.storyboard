@@ -54,6 +54,27 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
+                            <view contentMode="scaleToFill" id="cZ5-4n-aK0">
+                                <rect key="frame" x="174" y="0.0" width="420" height="62"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.10000000000000001" minValue="0.10000000000000001" maxValue="50" id="TPW-W1-dmk">
+                                        <rect key="frame" x="152" y="20" width="250" height="23"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <connections>
+                                            <action selector="edgeLowThresholdChanged:" destination="2" eventType="valueChanged" id="93e-eQ-8ne"/>
+                                        </connections>
+                                    </slider>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Thres: 0.1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="wnS-OC-ESs">
+                                        <rect key="frame" x="20" y="21" width="77" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -61,6 +82,9 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="edgeControlsContainer" destination="cZ5-4n-aK0" id="KJ2-lk-mdW"/>
+                        <outlet property="edgeLowThresholdLabel" destination="wnS-OC-ESs" id="9d9-OV-d85"/>
+                        <outlet property="edgeLowThresholdSlider" destination="TPW-W1-dmk" id="rQ7-sV-N3q"/>
                         <outlet property="imageView" destination="EuT-S7-0Mg" id="Hlj-0b-Z9i"/>
                         <outlet property="photoButton" destination="SJP-pY-u5M" id="XoS-mE-K2u"/>
                         <outlet property="selectionContainer" destination="61N-mR-7wJ" id="3id-ML-TO6"/>
@@ -93,7 +117,11 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/LTViewController.h"/>
             <relationships>
                 <relationship kind="action" name="blank:"/>
+                <relationship kind="action" name="edgeLowThresholdChanged:"/>
                 <relationship kind="action" name="selectPhoto:"/>
+                <relationship kind="outlet" name="edgeControlsContainer" candidateClass="UIView"/>
+                <relationship kind="outlet" name="edgeLowThresholdLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="edgeLowThresholdSlider" candidateClass="UISlider"/>
                 <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="photoButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="selectionContainer" candidateClass="UIView"/>
