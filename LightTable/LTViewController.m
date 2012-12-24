@@ -315,6 +315,10 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
          _imageView.image = nil;
 
+         _selectPhotoGuard = NO;
+
+         self.view.backgroundColor = [UIColor whiteColor];
+
          [self setControlsEnabled:NO animate:YES];
 
          [self resetImageProperties];
@@ -331,18 +335,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
         
         if (_imageView.image != nil) {
 
-            [UIView
-             animateWithDuration:.15f
-             animations:^{
-                 _imageView.alpha = 0.0f;
-             } completion:^(BOOL finished) {
-
-                 _imageView.alpha = 1.0f;
-
-                 [self blank:sender];
-
-                 _selectPhotoGuard = NO;
-             }];
+            [self blank:sender];
             
         } else {
 
