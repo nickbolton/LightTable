@@ -11,6 +11,7 @@
 + (LTEdgeDetector *)sharedInstance;
 
 - (UIImage *)applyEdgeDetection:(UIImage *)originalImage
-                   lowThreshold:(CGFloat)lowThreshold;
+                   lowThreshold:(CGFloat)lowThreshold
+                       inverted:(BOOL)inverted;
 
 @end

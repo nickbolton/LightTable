@@ -19,6 +19,8 @@ NSString * const kLTLastImageTransformCKey = @"last-image-c";
 NSString * const kLTLastImageTransformDKey = @"last-image-d";
 NSString * const kLTLastImageTransformXKey = @"last-image-x";
 NSString * const kLTLastImageTransformYKey = @"last-image-y";
+NSString * const kLTLastImageInvertedKey = @"last-image-inv";
+NSString * const kLTLastImageLockZoomKey = @"last-image-lock-zoom";
 NSString * const kLTLastImageEdgeKey = @"last-image-edge";
 
 @interface LTViewController () <
@@ -26,6 +28,8 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
     BOOL _locked;
     BOOL _landscape;
+    BOOL _jinGuard;
+    BOOL _selectPhotoGuard;
 }
 
 @property (nonatomic, strong) UIPopoverController *imageSelectionPopoverController;
@@ -36,9 +40,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 @property (nonatomic, strong) UITapGestureRecognizer *mainViewTapRecognizer;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapRecognizer;
 @property (nonatomic, strong) UITapGestureRecognizer *mainViewDoubleTapRecognizer;
-@property (nonatomic, strong) UITapGestureRecognizer *edgeRecognizer;
-@property (nonatomic, strong) UITapGestureRecognizer *selectionRecognizer;
-@property (nonatomic, strong) UITapGestureRecognizer *mainViewSelectionRecognizer;
 @property (nonatomic, strong) ALAssetsLibrary *library;
 @property (nonatomic, strong) UIImage *originalImage;
 @property (nonatomic) CGPoint scaleCenter;
@@ -67,18 +68,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
     _mainViewDoubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
 
-    _edgeRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(edgeDetection:)];
-    _edgeRecognizer.numberOfTouchesRequired = 2;
-    _edgeRecognizer.numberOfTapsRequired = 2;
-
-    _selectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showSelection:)];
-    _selectionRecognizer.numberOfTouchesRequired = 3;
-    _selectionRecognizer.numberOfTapsRequired = 3;
-
-    _mainViewSelectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showSelection:)];
-    _mainViewSelectionRecognizer.numberOfTouchesRequired = 3;
-    _mainViewSelectionRecognizer.numberOfTapsRequired = 3;
-
     [_tapRecognizer requireGestureRecognizerToFail:_doubleTapRecognizer];
     [_mainViewTapRecognizer requireGestureRecognizerToFail:_mainViewDoubleTapRecognizer];
 
@@ -93,12 +82,9 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     [_imageView addGestureRecognizer:_pinchRecognizer];
     [_imageView addGestureRecognizer:_tapRecognizer];
     [_imageView addGestureRecognizer:_doubleTapRecognizer];
-    [_imageView addGestureRecognizer:_edgeRecognizer];
-    [_imageView addGestureRecognizer:_selectionRecognizer];
     
     [self.view addGestureRecognizer:_mainViewTapRecognizer];
     [self.view addGestureRecognizer:_mainViewDoubleTapRecognizer];
-    [self.view addGestureRecognizer:_mainViewSelectionRecognizer];
 
     self.library = [[ALAssetsLibrary alloc] init];
 
@@ -114,6 +100,17 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
     _edgeControlsContainer.alpha = 0.0f;
 
+    [self setControlsEnabled:NO animate:NO];
+    
+    _selectImageButton.hidden = NO;
+    _clearImageButton.hidden = YES;
+
+    _findEdgesButton.hidden = NO;
+    _removeEdgesButton.hidden = YES;
+
+    _lockZoomButton.hidden = NO;
+    _unlockZoomButton.hidden = YES;
+
     if (lastImagePath.length > 0) {
 
         NSURL *assetURL = [NSURL URLWithString:lastImagePath];
@@ -128,11 +125,15 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
                     CGImageRef iref = [rep fullResolutionImage];
                     if (iref) {
 
-                        _selectionContainer.alpha = 0.0f;
                         UIImage *image = [UIImage imageWithCGImage:iref scale:1.0f orientation:(UIImageOrientation)rep.orientation];;
 
                         self.imageView.image = image;
                         self.originalImage = image;
+
+                        [self setControlsEnabled:YES animate:YES];
+
+                        _selectImageButton.hidden = YES;
+                        _clearImageButton.hidden = NO;
 
                         [self updateImageTransform];
 
@@ -140,10 +141,22 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
                         [[NSUserDefaults standardUserDefaults]
                          boolForKey:kLTLastImageEdgeKey];
 
+                        BOOL lockZoom =
+                        [[NSUserDefaults standardUserDefaults]
+                         boolForKey:kLTLastImageLockZoomKey];
+
                         _edgeControlsContainer.alpha = edgeDetectionOn ? 1.0f : 0.0f;
+
+                        _findEdgesButton.hidden = edgeDetectionOn;
+                        _removeEdgesButton.hidden = !edgeDetectionOn;
+
+                        _lockZoomButton.hidden = lockZoom;
+                        _unlockZoomButton.hidden = !lockZoom;
 
                         if (edgeDetectionOn) {
                             [self updateEdgeDetectionImage];
+                        } else {
+                            self.view.backgroundColor = [UIColor whiteColor];
                         }
 
                     } else {
@@ -248,21 +261,63 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     // Dispose of any resources that can be recreated.
 }
 
+- (void)setControlsEnabled:(BOOL)enabled animate:(BOOL)animate {
+
+    CGFloat alpha = enabled ? 1.0f : 0.0f;
+
+    _findEdgesButton.enabled = enabled;
+    _removeEdgesButton.enabled = enabled;
+    _invertButton.enabled = enabled;
+    _lockZoomButton.enabled = enabled;
+    _unlockZoomButton.enabled = enabled;
+
+    if (animate) {
+        [UIView
+         animateWithDuration:.15f
+         animations:^{
+             _findEdgesButton.alpha = alpha;
+             _removeEdgesButton.alpha = alpha;
+             _invertButton.alpha = alpha;
+             _lockZoomButton.alpha = alpha;
+             _unlockZoomButton.alpha = alpha;
+         }];
+    } else {
+        _findEdgesButton.alpha = alpha;
+        _removeEdgesButton.alpha = alpha;
+        _invertButton.alpha = alpha;
+        _lockZoomButton.alpha = alpha;
+        _unlockZoomButton.alpha = alpha;
+    }
+}
+
+- (void)resetImageProperties {
+    [[NSUserDefaults standardUserDefaults]
+     removeObjectForKey:kLTLastImagePathKey];
+    [[NSUserDefaults standardUserDefaults]
+     removeObjectForKey:kLTLastImageInvertedKey];
+    [[NSUserDefaults standardUserDefaults]
+     removeObjectForKey:kLTLastImageLockZoomKey];
+    [[NSUserDefaults standardUserDefaults]
+     removeObjectForKey:kLTLastImageEdgeKey];
+    [self removeImageTransformValues];
+}
+
 - (IBAction)blank:(id)sender {
 
     [UIView
      animateWithDuration:.15f
      animations:^{
          _imageView.alpha = 0.0f;
-         _selectionContainer.alpha = 0.0f;
      } completion:^(BOOL finished) {
+
+         _selectImageButton.hidden = NO;
+         _clearImageButton.hidden = YES;
 
          _imageView.image = nil;
 
-         [[NSUserDefaults standardUserDefaults]
-          removeObjectForKey:kLTLastImagePathKey];
+         [self setControlsEnabled:NO animate:YES];
 
-         [self removeImageTransformValues];
+         [self resetImageProperties];
          [self reset:NO];
 
          _imageView.alpha = 1.0f;
@@ -271,49 +326,120 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
 - (IBAction)selectPhoto:(id)sender {
 
-    [UIView
-     animateWithDuration:.15f
-     animations:^{
-         _imageView.alpha = 0.0f;
-         _selectionContainer.alpha = 0.0f;
-     } completion:^(BOOL finished) {
+    if (_jinGuard == NO && _selectPhotoGuard == NO) {
+        _selectPhotoGuard = YES;
+        
+        if (_imageView.image != nil) {
 
-         _imageView.image = nil;
+            [UIView
+             animateWithDuration:.15f
+             animations:^{
+                 _imageView.alpha = 0.0f;
+             } completion:^(BOOL finished) {
 
-         [self removeImageTransformValues];
-         [self reset:NO];
+                 _imageView.alpha = 1.0f;
 
-         _imageView.alpha = 1.0f;
+                 [self blank:sender];
 
-         [self selectPhoto];
-     }];
+                 _selectPhotoGuard = NO;
+             }];
+            
+        } else {
 
+            [self resetImageProperties];
+            [self reset:NO];
+            
+            [self selectPhoto];
+            
+        }
+    }
+}
+
+- (IBAction)findEdges:(id)sender {
+    
+    if (_jinGuard == NO && _imageView.image != nil) {
+
+        _jinGuard = YES;
+
+        BOOL edgeDetectionOn =
+        [[NSUserDefaults standardUserDefaults]
+         boolForKey:kLTLastImageEdgeKey];
+
+        CGFloat controlsAlpha;
+
+        if (edgeDetectionOn) {
+
+            // turning off
+
+            controlsAlpha = 0.0f;
+
+            _imageView.image = self.originalImage;
+
+        } else {
+
+            // turning on
+
+            controlsAlpha = 1.0f;
+
+            [self updateEdgeDetectionImage];
+
+            self.view.backgroundColor = [UIColor whiteColor];
+        }
+
+        [UIView
+         animateWithDuration:.15f
+         animations:^{
+             _edgeControlsContainer.alpha = controlsAlpha;
+         } completion:^(BOOL finished) {
+
+             _findEdgesButton.hidden = !edgeDetectionOn;
+             _removeEdgesButton.hidden = edgeDetectionOn;
+
+             [[NSUserDefaults standardUserDefaults]
+              setBool:!edgeDetectionOn forKey:kLTLastImageEdgeKey];
+             [[NSUserDefaults standardUserDefaults] synchronize];
+
+             _jinGuard = NO;
+         }];
+    }
+}
+
+- (IBAction)toggleLockZoom:(id)sender {
+
+    BOOL lockZoom =
+    [[NSUserDefaults standardUserDefaults]
+     boolForKey:kLTLastImageLockZoomKey];
+
+    [[NSUserDefaults standardUserDefaults]
+     setBool:!lockZoom forKey:kLTLastImageLockZoomKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    _lockZoomButton.hidden = !lockZoom;
+    _unlockZoomButton.hidden = lockZoom;
+
+    [_lockZoomButton setNeedsDisplay];
+}
+
+- (IBAction)invertImage:(id)sender {
+
+    BOOL edgeDetectionOn =
+    [[NSUserDefaults standardUserDefaults]
+     boolForKey:kLTLastImageEdgeKey];
+
+    if (edgeDetectionOn) {
+        BOOL inverted =
+        [[NSUserDefaults standardUserDefaults]
+         boolForKey:kLTLastImageInvertedKey];
+
+        [[NSUserDefaults standardUserDefaults]
+         setBool:!inverted forKey:kLTLastImageInvertedKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+
+        [self updateEdgeDetectionImage];
+    }
 }
 
 -(void)reset:(BOOL)animated {
-
-//    UIDeviceOrientation orient = [[UIDevice currentDevice] orientation];
-//    CGFloat aspect;
-//    CGFloat w;
-//    CGFloat h;
-//    CGAffineTransform transform = CGAffineTransformIdentity;
-//
-//    if (orient == UIDeviceOrientationPortrait ||
-//        orient == UIDeviceOrientationPortraitUpsideDown) {
-//
-//        aspect = self.sourceImage.size.height/self.sourceImage.size.width;
-//        w = CGRectGetWidth(self.cropRect);
-//        h = aspect * w;
-//
-//    } else {
-//
-//        aspect = self.sourceImage.size.width/self.sourceImage.size.height;
-//        w = CGRectGetHeight(self.cropRect);
-//        h = aspect * w;
-//
-//    }
-//
-//    self.scale = 1;
 
     void (^doReset)(void) = ^{
         self.imageView.transform = CGAffineTransformIdentity;
@@ -404,26 +530,32 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
 }
 
-- (void)handlePinch:(UIPinchGestureRecognizer *)recognizer
-{
-    if(recognizer.state == UIGestureRecognizerStateBegan ||
-       recognizer.state == UIGestureRecognizerStateChanged) {
-        
-        if(recognizer.state == UIGestureRecognizerStateBegan){
-            self.scaleCenter = self.touchCenter;
+- (void)handlePinch:(UIPinchGestureRecognizer *)recognizer {
+
+    BOOL lockZoom =
+    [[NSUserDefaults standardUserDefaults]
+     boolForKey:kLTLastImageLockZoomKey];
+
+    if (lockZoom == NO) {
+        if(recognizer.state == UIGestureRecognizerStateBegan ||
+           recognizer.state == UIGestureRecognizerStateChanged) {
+
+            if(recognizer.state == UIGestureRecognizerStateBegan){
+                self.scaleCenter = self.touchCenter;
+            }
+            CGFloat deltaX = self.scaleCenter.x-self.imageView.bounds.size.width/2.0;
+            CGFloat deltaY = self.scaleCenter.y-self.imageView.bounds.size.height/2.0;
+
+            CGAffineTransform transform =  CGAffineTransformTranslate(self.imageView.transform, deltaX, deltaY);
+            transform = CGAffineTransformScale(transform, recognizer.scale, recognizer.scale);
+            transform = CGAffineTransformTranslate(transform, -deltaX, -deltaY);
+
+            self.imageView.transform = transform;
+
+            recognizer.scale = 1;
+        } else {
+            [self saveImageTransformValues];
         }
-        CGFloat deltaX = self.scaleCenter.x-self.imageView.bounds.size.width/2.0;
-        CGFloat deltaY = self.scaleCenter.y-self.imageView.bounds.size.height/2.0;
-
-        CGAffineTransform transform =  CGAffineTransformTranslate(self.imageView.transform, deltaX, deltaY);
-        transform = CGAffineTransformScale(transform, recognizer.scale, recognizer.scale);
-        transform = CGAffineTransformTranslate(transform, -deltaX, -deltaY);
-
-        self.imageView.transform = transform;
-
-        recognizer.scale = 1;
-    } else {
-        [self saveImageTransformValues];
     }
 }
 
@@ -565,15 +697,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
      }];
 }
 
-- (void)showSelection:(UITapGestureRecognizer *)gesture {
-
-    [UIView
-     animateWithDuration:.15f
-     animations:^{
-         _selectionContainer.alpha = 1.0f;
-     }];
-}
-
 - (void)handleDoubleTap:(UITapGestureRecognizer *)recognizer {
     [self reset:YES];
 }
@@ -584,49 +707,19 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     [self updateEdgeDetectionImage];
 }
 
-- (void)edgeDetection:(UITapGestureRecognizer *)recognizer {
-
-    BOOL edgeDetectionOn =
-    [[NSUserDefaults standardUserDefaults]
-     boolForKey:kLTLastImageEdgeKey];
-
-    CGFloat controlsAlpha;
-
-    if (edgeDetectionOn) {
-
-        // turning off
-
-        controlsAlpha = 0.0f;
-
-        _imageView.image = self.originalImage;
-
-    } else {
-
-        // turning on
-
-        controlsAlpha = 1.0f;
-
-        [self updateEdgeDetectionImage];
-
-    }
-
-    [UIView
-     animateWithDuration:.15f
-     animations:^{
-         _edgeControlsContainer.alpha = controlsAlpha;
-     }];
-
-    [[NSUserDefaults standardUserDefaults]
-     setBool:!edgeDetectionOn forKey:kLTLastImageEdgeKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
 - (void)updateEdgeDetectionImage {
+
+    BOOL inverted =
+    [[NSUserDefaults standardUserDefaults]
+     boolForKey:kLTLastImageInvertedKey];
     
     UIImage *updatedImage =
     [[LTEdgeDetector sharedInstance]
      applyEdgeDetection:_originalImage
-     lowThreshold:_edgeLowThresholdSlider.value];
+     lowThreshold:_edgeLowThresholdSlider.value
+     inverted:inverted];
+
+    self.view.backgroundColor = inverted ? [UIColor blackColor] : [UIColor whiteColor];
 
     _imageView.image = updatedImage;
 }
@@ -678,9 +771,10 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     }
 
     [UIView
-     animateWithDuration:.3f
+     animateWithDuration:.15f
      animations:^{
          _slideToCancel.view.alpha = 0.0f;
+         _selectionContainer.alpha = 0.0f;
      } completion:^(BOOL finished) {
          _slideToCancel.reversed = YES;
      }];
@@ -689,6 +783,12 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 - (void)sliderReachedReversePosition {
     _locked = NO;
     _slideToCancel.reversed = NO;
+
+    [UIView
+     animateWithDuration:.15f
+     animations:^{
+         _selectionContainer.alpha = 1.0f;
+     }];
 
     for (UIGestureRecognizer *gesture in self.view.gestureRecognizers) {
         gesture.enabled = YES;
@@ -706,7 +806,13 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
         [self takePhotoWithCamera];
     } else if (buttonIndex == 1) {
         [self selectPhotoFromLibrary];
+    } else {
+        _selectPhotoGuard = NO;
     }
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    _selectPhotoGuard = NO;
 }
 
 - (void)takePhotoWithCamera {
@@ -722,10 +828,12 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
     _imageSelectionPopoverController.delegate = self;
 
+    UIView *view = _selectImageButton.hidden ? _clearImageButton : _selectImageButton;
+
     [_imageSelectionPopoverController
-     presentPopoverFromRect:_photoButton.bounds
-     inView:_photoButton
-     permittedArrowDirections:UIPopoverArrowDirectionLeft
+     presentPopoverFromRect:view.bounds
+     inView:view
+     permittedArrowDirections:UIPopoverArrowDirectionRight
      animated:YES];
 
 }
@@ -743,10 +851,12 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
     _imageSelectionPopoverController.delegate = self;
 
+    UIView *view = _selectImageButton.hidden ? _clearImageButton : _selectImageButton;
+
     [_imageSelectionPopoverController
-     presentPopoverFromRect:_photoButton.bounds
-     inView:_photoButton
-     permittedArrowDirections:UIPopoverArrowDirectionLeft
+     presentPopoverFromRect:view.bounds
+     inView:view
+     permittedArrowDirections:UIPopoverArrowDirectionRight
      animated:YES];
 
 }
@@ -757,56 +867,58 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
     [_imageSelectionPopoverController dismissPopoverAnimated:YES];
 
-    [UIView
-     animateWithDuration:.15f
-     animations:^{
-         _selectionContainer.alpha = 0.0f;
-     } completion:^(BOOL finished) {
-         UIImage *image =  [info objectForKey:UIImagePickerControllerOriginalImage];
-         NSURL *assetURL = [info objectForKey:UIImagePickerControllerReferenceURL];
+    UIImage *image =  [info objectForKey:UIImagePickerControllerOriginalImage];
+    NSURL *assetURL = [info objectForKey:UIImagePickerControllerReferenceURL];
 
-         self.imageView.image = image;
-         self.originalImage = image;
+    self.imageView.image = image;
+    self.originalImage = image;
 
-         [[NSUserDefaults standardUserDefaults]
-          removeObjectForKey:kLTLastImageEdgeKey];
+    [self setControlsEnabled:YES animate:YES];
 
-         if (assetURL == nil) {
+    _selectImageButton.hidden = YES;
+    _clearImageButton.hidden = NO;
 
-             [self.library
-              writeImageToSavedPhotosAlbum:[image CGImage]
-              orientation:(ALAssetOrientation)image.imageOrientation
-              completionBlock:^(NSURL *assetURL, NSError *error){
-                  if (error) {
+    [[NSUserDefaults standardUserDefaults]
+     removeObjectForKey:kLTLastImageEdgeKey];
 
-                      [[NSUserDefaults standardUserDefaults] synchronize];
+    if (assetURL == nil) {
 
-                      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error Saving"
-                                                                      message:[error localizedDescription]
-                                                                     delegate:nil
-                                                            cancelButtonTitle:@"Ok"
-                                                            otherButtonTitles: nil];
-                      [alert show];
-                  } else {
+        [self.library
+         writeImageToSavedPhotosAlbum:[image CGImage]
+         orientation:(ALAssetOrientation)image.imageOrientation
+         completionBlock:^(NSURL *assetURL, NSError *error){
+             if (error) {
 
-                      [[NSUserDefaults standardUserDefaults]
-                       setObject:assetURL.absoluteString forKey:kLTLastImagePathKey];
-                      [self removeImageTransformValues];
-                  }
-              }];
-         } else {
+                 [[NSUserDefaults standardUserDefaults] synchronize];
 
-             [[NSUserDefaults standardUserDefaults]
-              setObject:assetURL.absoluteString forKey:kLTLastImagePathKey];
-             [self removeImageTransformValues];
-         }
-     }];
+                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error Saving"
+                                                                 message:[error localizedDescription]
+                                                                delegate:nil
+                                                       cancelButtonTitle:@"Ok"
+                                                       otherButtonTitles: nil];
+                 [alert show];
+             } else {
+
+                 [[NSUserDefaults standardUserDefaults]
+                  setObject:assetURL.absoluteString forKey:kLTLastImagePathKey];
+                 [self removeImageTransformValues];
+             }
+             _selectPhotoGuard = NO;
+         }];
+    } else {
+        _selectPhotoGuard = NO;
+
+        [[NSUserDefaults standardUserDefaults]
+         setObject:assetURL.absoluteString forKey:kLTLastImagePathKey];
+        [self removeImageTransformValues];
+    }
 }
 
 #pragma mark - UIPopoverControllerDelegate Conformance
 
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
     self.imageSelectionPopoverController = nil;
+    _selectPhotoGuard = NO;
 }
 
 @end
