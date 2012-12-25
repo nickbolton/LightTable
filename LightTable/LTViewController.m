@@ -14,6 +14,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "UIView+Snapshot.h"
 #import "MBProgressHUD.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 NSString * const kLTLastImagePathKey = @"last-image-path";
 NSString * const kLTLastImageTransformAKey = @"last-image-a";
@@ -33,13 +34,13 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     BOOL _landscape;
     BOOL _jinGuard;
     BOOL _selectPhotoGuard;
+    SystemSoundID _tickSoundID;
 }
 
 @property (nonatomic, strong) UIPopoverController *imageSelectionPopoverController;
 @property (nonatomic, strong) UIPanGestureRecognizer *panRecognizer;
 @property (nonatomic, strong) UIRotationGestureRecognizer *rotationRecognizer;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinchRecognizer;
-@property (nonatomic, strong) UITapGestureRecognizer *tapRecognizer;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapRecognizer;
 @property (nonatomic, strong) ALAssetsLibrary *library;
 @property (nonatomic, strong) UIImage *originalImage;
@@ -52,6 +53,12 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"tick" ofType:@"mp3"];
+    
+    NSURL *filePath = [NSURL fileURLWithPath: path isDirectory: NO];
+
+    AudioServicesCreateSystemSoundID((__bridge CFURLRef)filePath, &_tickSoundID);
 
     self.sliderLockButton.titleLabel.text = NSLocalizedString(@"SLIDE TO LOCK", nil);
     self.sliderUnlockButton.titleLabel.text = NSLocalizedString(@"SLIDE TO UNLOCK", nil);
@@ -85,16 +92,12 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     _panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     _rotationRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
     _pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
-    _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
     _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
 
-    _tapRecognizer.delegate = self;
     _doubleTapRecognizer.delegate = self;
     _rotationRecognizer.delegate = self;
     _pinchRecognizer.delegate = self;
     _panRecognizer.delegate = self;
-
-    [_tapRecognizer requireGestureRecognizerToFail:_doubleTapRecognizer];
 
     _doubleTapRecognizer.numberOfTapsRequired = 2;
 
@@ -106,7 +109,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     _imageView.layer.borderColor = [UIColor clearColor].CGColor;
     _imageView.layer.shouldRasterize = YES;
 
-    [_mainContainer addGestureRecognizer:_tapRecognizer];
     [_mainContainer addGestureRecognizer:_doubleTapRecognizer];
 
     self.library = [[ALAssetsLibrary alloc] init];
@@ -700,25 +702,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     return self.imageView.transform.ty;
 }
 
-- (void)handleTap:(UITapGestureRecognizer *)gesture {
-
-    CGFloat alpha;
-
-    if (_slideToCancel.view.alpha > 0.0f) {
-
-        alpha = 0.0f;
-    } else {
-
-        alpha = 1.0f;
-    }
-
-    [UIView
-     animateWithDuration:.15f
-     animations:^{
-         _slideToCancel.view.alpha = alpha;
-     }];
-}
-
 - (void)handleDoubleTap:(UITapGestureRecognizer *)recognizer {
     [self reset:YES];
 }
@@ -789,9 +772,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 - (void)sliderReachedForwardPosition {
 
     for (UIGestureRecognizer *gesture in _mainContainer.gestureRecognizers) {
-        if (gesture != _tapRecognizer) {
-            gesture.enabled = YES;
-        }
+        gesture.enabled = YES;
     }
 
     for (UIGestureRecognizer *gesture in _imageView.gestureRecognizers) {
@@ -800,13 +781,14 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
     _slideToCancel.reversed = YES;
 
+    AudioServicesPlaySystemSound(_tickSoundID);
+
     [UIView
      animateWithDuration:.15f
      animations:^{
          _selectionContainer.alpha = 1.0f;
          _selectImageButton.alpha = 1.0f;
          _clearImageButton.alpha = 1.0f;
-         _slideToCancel.view.alpha = 1.0f;
      }];
 }
 
@@ -815,7 +797,6 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     [UIView
      animateWithDuration:.15f
      animations:^{
-         _slideToCancel.view.alpha = 0.0f;
          _selectImageButton.alpha = 0.0f;
          _clearImageButton.alpha = 0.0f;
          _selectionContainer.alpha = 0.0f;
@@ -823,10 +804,10 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
          _slideToCancel.reversed = NO;
      }];
 
+    AudioServicesPlaySystemSound(_tickSoundID);
+
     for (UIGestureRecognizer *gesture in _mainContainer.gestureRecognizers) {
-        if (gesture != _tapRecognizer) {
-            gesture.enabled = NO;
-        }
+        gesture.enabled = NO;
     }
 
     for (UIGestureRecognizer *gesture in _imageView.gestureRecognizers) {

@@ -50,6 +50,8 @@
 		FEAF93C71689F6720026294D /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = FEAF93C61689F6720026294D /* MBProgressHUD.m */; };
 		FEAF93CA1689FB460026294D /* LTImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = FEAF93C91689FB460026294D /* LTImageView.m */; };
 		FEAF93CD1689FCC00026294D /* LTView.m in Sources */ = {isa = PBXBuildFile; fileRef = FEAF93CC1689FCC00026294D /* LTView.m */; };
+		FEAF93CF168A468D0026294D /* tick.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = FEAF93CE168A468D0026294D /* tick.mp3 */; };
+		FEAF93D6168A472D0026294D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEAF93D5168A472D0026294D /* AudioToolbox.framework */; };
 		FEC3934116872ED800CD5F4E /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEC3934016872ED800CD5F4E /* opencv2.framework */; };
 		FEEAE2DB168746E500CBA401 /* LTEdgeDetector.mm in Sources */ = {isa = PBXBuildFile; fileRef = FEEAE2DA168746E500CBA401 /* LTEdgeDetector.mm */; };
 		FEEAE2E016874A3700CBA401 /* UIImage+Utilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = FEEAE2DF16874A3700CBA401 /* UIImage+Utilities.mm */; };
@@ -110,6 +112,8 @@
 		FEAF93C91689FB460026294D /* LTImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LTImageView.m; sourceTree = "<group>"; };
 		FEAF93CB1689FCC00026294D /* LTView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LTView.h; sourceTree = "<group>"; };
 		FEAF93CC1689FCC00026294D /* LTView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LTView.m; sourceTree = "<group>"; };
+		FEAF93CE168A468D0026294D /* tick.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tick.mp3; sourceTree = "<group>"; };
+		FEAF93D5168A472D0026294D /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		FEC3934016872ED800CD5F4E /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Externals/opencv2.framework; sourceTree = "<group>"; };
 		FEEAE2D9168746E500CBA401 /* LTEdgeDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LTEdgeDetector.h; sourceTree = "<group>"; };
 		FEEAE2DA168746E500CBA401 /* LTEdgeDetector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LTEdgeDetector.mm; sourceTree = "<group>"; };
@@ -122,6 +126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FEAF93D6168A472D0026294D /* AudioToolbox.framework in Frameworks */,
 				FEC3934116872ED800CD5F4E /* opencv2.framework in Frameworks */,
 				FE351C6316865AA9000FB0DE /* AssetsLibrary.framework in Frameworks */,
 				FE9DBCC316794E73009E5B75 /* UIKit.framework in Frameworks */,
@@ -136,6 +141,7 @@
 		FE351C6616865DE5000FB0DE /* images */ = {
 			isa = PBXGroup;
 			children = (
+				FEAF93CE168A468D0026294D /* tick.mp3 */,
 				FE88865916898E920006D58E /* btn_main.png */,
 				FE88865A16898E920006D58E /* btn_main@2x.png */,
 				FE88865F16898E920006D58E /* icon_lock_active.png */,
@@ -235,6 +241,7 @@
 		FE9DBCC116794E73009E5B75 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FEAF93D5168A472D0026294D /* AudioToolbox.framework */,
 				FEC3934016872ED800CD5F4E /* opencv2.framework */,
 				FE351C6216865AA9000FB0DE /* AssetsLibrary.framework */,
 				FE9DBCC216794E73009E5B75 /* UIKit.framework */,
@@ -360,6 +367,7 @@
 				FEAF93C11689DD1B0026294D /* icon_arrow_left@2x.png in Resources */,
 				FEAF93C21689DD1B0026294D /* icon_arrow_right.png in Resources */,
 				FEAF93C31689DD1B0026294D /* icon_arrow_right@2x.png in Resources */,
+				FEAF93CF168A468D0026294D /* tick.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
