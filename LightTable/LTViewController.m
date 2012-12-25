@@ -568,6 +568,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 - (void)handlePinch:(UIPinchGestureRecognizer *)recognizer {
 
     static CGFloat maxScale = 5.0f;
+    static CGFloat minScale = 0.5f;
 
     BOOL lockZoom =
     [[NSUserDefaults standardUserDefaults]
@@ -589,7 +590,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
             CGFloat newScale = sqrtf(a*a+c*c);
 
-            if (newScale < maxScale) {
+            if (minScale < newScale && newScale < maxScale) {
                 self.imageView.transform = transform;
             }
 
