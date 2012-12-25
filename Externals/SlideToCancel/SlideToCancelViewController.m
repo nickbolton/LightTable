@@ -58,34 +58,51 @@ static const int animationFramesPerSec = 8;
 
     if (_reversed == reversed) return;
 
+    _reversed = reversed;
+
+    UIImage *thumbImage;
+
     if (_reversed) {
-
-        slider.transform = CGAffineTransformIdentity;
-
-        label.text = self.forwardText;
-
-        slider.value = 0.0f;
-        _reversed = NO;
-
-    } else {
 
         slider.transform = CGAffineTransformMakeRotation(M_PI);
 
         label.text = self.reverseText;
 
         slider.value = 0.0f;
-        _reversed = YES;
+
+        thumbImage = _reverseImage;
+        
+    } else {
+
+        slider.transform = CGAffineTransformIdentity;
+
+        label.text = self.forwardText;
+
+        slider.value = 0.0f;
+
+        thumbImage = _forwardImage;
 
     }
 
-    [UIView
-     animateWithDuration:.15f
-     animations:^{
-         label.alpha = 1.0;
-     } completion:^(BOOL finished) {
-         [self startTimer];
-     }];
+//    [UIView
+//     animateWithDuration:.15f
+//     animations:^{
+//
+//         slider.alpha = 0.0f;
+//         
+//     } completion:^(BOOL finished) {
 
+         [slider setThumbImage:thumbImage forState:UIControlStateNormal];
+
+         [UIView
+          animateWithDuration:.15f
+          animations:^{
+              label.alpha = 1.0f;
+              slider.alpha = 1.0f;
+          } completion:^(BOOL finished) {
+              [self startTimer];
+          }];
+//     }];
 }
 
 - (UILabel *)label {
@@ -98,11 +115,9 @@ static const int animationFramesPerSec = 8;
 
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
-	// Load the track background
+	// Load the track background    
 
-
-
-	UIImage *trackImage =
+	UIImage *trackImage = nil;
     [UIImage imageNamed:@"sliderTrack.png"];
 
     CGFloat midPoint = trackImage.size.width/2.0f;
@@ -114,24 +129,25 @@ static const int animationFramesPerSec = 8;
 
 	sliderBackground = [[UIImageView alloc] initWithImage:stretchableImage];
     sliderBackground.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+
+    CGRect frame = sliderBackground.frame;
+    frame.size.height = _forwardImage.size.height;
 	
 	// Create the superview same size as track backround, and add the background image to it
-	UIView *view = [[UIView alloc] initWithFrame:sliderBackground.frame];
+	UIView *view = [[UIView alloc] initWithFrame:frame];
     view.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-	[view addSubview:sliderBackground];
-	
+//	[view addSubview:sliderBackground];
+
 	// Add the slider with correct geometry centered over the track
-	slider = [[UISlider alloc] initWithFrame:sliderBackground.frame];
+	slider = [[UISlider alloc] initWithFrame:frame];
     slider.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	CGRect sliderFrame = slider.frame;
-	sliderFrame.size.width -= 46; //each "edge" of the track is 23 pixels wide
+	sliderFrame.size.width -= 0; //each "edge" of the track is 23 pixels wide
 	slider.frame = sliderFrame;
-	slider.center = sliderBackground.center;
+	slider.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
 	slider.backgroundColor = [UIColor clearColor];
 	[slider setMinimumTrackImage:[UIImage imageNamed:@"sliderMaxMin-02.png"] forState:UIControlStateNormal];
 	[slider setMaximumTrackImage:[UIImage imageNamed:@"sliderMaxMin-02.png"] forState:UIControlStateNormal];
-	UIImage *thumbImage = [UIImage imageNamed:@"sliderThumb.png"];
-	[slider setThumbImage:thumbImage forState:UIControlStateNormal];
 	slider.minimumValue = 0.0;
 	slider.maximumValue = 1.0;
 	slider.continuous = YES;
@@ -163,7 +179,7 @@ static const int animationFramesPerSec = 8;
 	label = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, labelSize.width, labelSize.height)];
 	
 	// Center the label over the slidable portion of the track
-	CGFloat labelHorizontalCenter = slider.center.x + (thumbImage.size.width / 2);
+	CGFloat labelHorizontalCenter = slider.center.x + (_forwardImage.size.width / 2);
 	label.center = CGPointMake(labelHorizontalCenter, slider.center.y);
     label.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
 	
@@ -192,6 +208,8 @@ static const int animationFramesPerSec = 8;
 	
 	// The view is retained by the superclass, so release our copy
 	[view release];
+
+    self.reversed = YES;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -210,9 +228,7 @@ static const int animationFramesPerSec = 8;
 }
 
 // UISlider actions
-- (void) sliderUp: (UISlider *) sender
-{
-    NSLog(@"%s", __PRETTY_FUNCTION__);
+- (void)sliderUp:(UISlider *)sender {
 	//filter out duplicate sliderUp events
 	if (touchIsDown) {
 		touchIsDown = NO;
@@ -238,15 +254,11 @@ static const int animationFramesPerSec = 8;
 	}
 }
 
-- (void) sliderDown: (UISlider *) sender
-{
-    NSLog(@"%s", __PRETTY_FUNCTION__);
+- (void)sliderDown:(UISlider *)sender {
 	touchIsDown = YES;
 }
 
-- (void) sliderChanged: (UISlider *) sender
-{
-    NSLog(@"%s", __PRETTY_FUNCTION__);
+- (void)sliderChanged:(UISlider *)sender {
 	// Fade the text as the slider moves to the right. This code makes the
 	// text totally dissapear when the slider is 35% of the way to the right.
 	label.alpha = MAX(0.0, 1.0 - (slider.value * 3.5));
@@ -273,23 +285,23 @@ static const int animationFramesPerSec = 8;
 }
 
 - (void) startTimer {
-	if (!animationTimer) {
-		animationTimerCount = 0;
-		[self setGradientLocations:0];
-		animationTimer = [[NSTimer 
-						   scheduledTimerWithTimeInterval:1.0/animationFramesPerSec 
-						   target:self 
-						   selector:@selector(animationTimerFired:) 
-						   userInfo:nil 
-						   repeats:YES] retain];
-	}
+//	if (!animationTimer) {
+//		animationTimerCount = 0;
+//		[self setGradientLocations:0];
+//		animationTimer = [[NSTimer 
+//						   scheduledTimerWithTimeInterval:1.0/animationFramesPerSec 
+//						   target:self 
+//						   selector:@selector(animationTimerFired:) 
+//						   userInfo:nil 
+//						   repeats:YES] retain];
+//	}
 }
 
 - (void) stopTimer {
-	if (animationTimer) {
-		[animationTimer invalidate];
-		[animationTimer release], animationTimer = nil;
-	}
+//	if (animationTimer) {
+//		[animationTimer invalidate];
+//		[animationTimer release], animationTimer = nil;
+//	}
 }
 
 // label's layer delegate method
@@ -399,6 +411,8 @@ static const int animationFramesPerSec = 8;
 
     [_forwardText release], _forwardText = nil;
     [_reverseText release], _reverseText = nil;
+    [_forwardImage release], _forwardImage = nil;
+    [_reverseImage release], _reverseImage = nil;
     
     [super dealloc];
 }

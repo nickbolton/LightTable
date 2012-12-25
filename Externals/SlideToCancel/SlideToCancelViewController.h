@@ -31,6 +31,8 @@
 
 @property (nonatomic, retain) NSString *forwardText;
 @property (nonatomic, retain) NSString *reverseText;
+@property (nonatomic, retain) UIImage *forwardImage;
+@property (nonatomic, retain) UIImage *reverseImage;
 @property (nonatomic, assign, getter = isReversed) BOOL reversed;
 
 @end

@@ -11,6 +11,8 @@
 #import "SlideToCancelViewController.h"
 #import "LTEdgeDetector.h"
 #import "UIAlertView+Utilities.h"
+#import "UIView+Snapshot.h"
+#import "MBProgressHUD.h"
 
 NSString * const kLTLastImagePathKey = @"last-image-path";
 NSString * const kLTLastImageTransformAKey = @"last-image-a";
@@ -22,11 +24,11 @@ NSString * const kLTLastImageTransformYKey = @"last-image-y";
 NSString * const kLTLastImageInvertedKey = @"last-image-inv";
 NSString * const kLTLastImageLockZoomKey = @"last-image-lock-zoom";
 NSString * const kLTLastImageEdgeKey = @"last-image-edge";
+CGFloat const kLTFindEdgesLowerThreshold = 20.0f;
 
 @interface LTViewController () <
 UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverControllerDelegate, UIActionSheetDelegate, UIGestureRecognizerDelegate, SlideToCancelDelegate> {
 
-    BOOL _locked;
     BOOL _landscape;
     BOOL _jinGuard;
     BOOL _selectPhotoGuard;
@@ -37,11 +39,10 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 @property (nonatomic, strong) UIRotationGestureRecognizer *rotationRecognizer;
 @property (nonatomic, strong) UIPinchGestureRecognizer *pinchRecognizer;
 @property (nonatomic, strong) UITapGestureRecognizer *tapRecognizer;
-@property (nonatomic, strong) UITapGestureRecognizer *mainViewTapRecognizer;
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapRecognizer;
-@property (nonatomic, strong) UITapGestureRecognizer *mainViewDoubleTapRecognizer;
 @property (nonatomic, strong) ALAssetsLibrary *library;
 @property (nonatomic, strong) UIImage *originalImage;
+@property (nonatomic, strong) UIImage *forwardSliderImage;
 @property (nonatomic) CGPoint touchCenter;
 @property (nonatomic, strong) SlideToCancelViewController *slideToCancel;
 @end
@@ -51,38 +52,59 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    self.sliderLockButton.titleLabel.text = NSLocalizedString(@"SLIDE TO LOCK", nil);
+    self.sliderUnlockButton.titleLabel.text = NSLocalizedString(@"SLIDE TO UNLOCK", nil);
+    self.clearImageButton.titleLabel.text = NSLocalizedString(@"CLEAR IMAGE", nil);
+    self.selectImageButton.titleLabel.text = NSLocalizedString(@"ADD IMAGE", nil);
+    self.findEdgesButton.titleLabel.text = NSLocalizedString(@"OUTLINE", nil);
+    self.removeEdgesButton.titleLabel.text = NSLocalizedString(@"OUTLINE", nil);
+    self.invertButton.titleLabel.text = NSLocalizedString(@"NEGATIVE", nil);
+    self.invertOffButton.titleLabel.text = NSLocalizedString(@"NEGATIVE", nil);
+    self.lockZoomButton.titleLabel.text = NSLocalizedString(@"LOCK SCALE", nil);
+    self.unlockZoomButton.titleLabel.text = NSLocalizedString(@"UNLOCK SCALE", nil);
+
+    self.forwardSliderImage = [UIImage imageWithData:[_sliderUnlockButton pngSnapshotData]];
+    UIImage *reverseSliderImage = [UIImage imageWithData:[_sliderLockButton pngSnapshotData]];
+    reverseSliderImage =
+    [UIImage
+     imageWithCGImage:reverseSliderImage.CGImage
+     scale:1.0f
+     orientation:UIImageOrientationDown];
+
     _slideToCancel = [[SlideToCancelViewController alloc] init];
     _slideToCancel.delegate = self;
+    _slideToCancel.forwardImage = _forwardSliderImage;
+    _slideToCancel.reverseImage = reverseSliderImage;
     _slideToCancel.forwardText = NSLocalizedString(@"Slide to lock", nil);
     _slideToCancel.reverseText = NSLocalizedString(@"Slide to unlock", nil);
 
-    [self.view addSubview:_slideToCancel.view];
+    _sliderLockButton.hidden = YES;
+    _sliderUnlockButton.hidden = YES;
+
+    [_mainContainer addSubview:_slideToCancel.view];
 
     _panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     _rotationRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
     _pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
     _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
-    _mainViewTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
     _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
-    _mainViewDoubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
+
+    _tapRecognizer.delegate = self;
+    _doubleTapRecognizer.delegate = self;
+    _rotationRecognizer.delegate = self;
+    _pinchRecognizer.delegate = self;
+    _panRecognizer.delegate = self;
 
     [_tapRecognizer requireGestureRecognizerToFail:_doubleTapRecognizer];
-    [_mainViewTapRecognizer requireGestureRecognizerToFail:_mainViewDoubleTapRecognizer];
 
     _doubleTapRecognizer.numberOfTapsRequired = 2;
-    _mainViewDoubleTapRecognizer.numberOfTapsRequired = 2;
-
-    _panRecognizer.delegate = self;
-    _pinchRecognizer.delegate = self;
 
     [_imageView addGestureRecognizer:_panRecognizer];
     [_imageView addGestureRecognizer:_rotationRecognizer];
     [_imageView addGestureRecognizer:_pinchRecognizer];
-    [_imageView addGestureRecognizer:_tapRecognizer];
-    [_imageView addGestureRecognizer:_doubleTapRecognizer];
-    
-    [self.view addGestureRecognizer:_mainViewTapRecognizer];
-    [self.view addGestureRecognizer:_mainViewDoubleTapRecognizer];
+
+    [_mainContainer addGestureRecognizer:_tapRecognizer];
+    [_mainContainer addGestureRecognizer:_doubleTapRecognizer];
 
     self.library = [[ALAssetsLibrary alloc] init];
 
@@ -96,8 +118,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
         [[NSUserDefaults standardUserDefaults] synchronize];
     };
 
-    _edgeControlsContainer.alpha = 0.0f;
-
     [self setControlsEnabled:NO animate:NO];
     
     _selectImageButton.hidden = NO;
@@ -108,6 +128,12 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
     _lockZoomButton.hidden = NO;
     _unlockZoomButton.hidden = YES;
+
+    _invertButton.hidden = NO;
+    _invertOffButton.hidden = YES;
+
+    _invertButton.enabled = NO;
+    _invertOffButton.enabled = NO;
 
     if (lastImagePath.length > 0) {
 
@@ -143,7 +169,9 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
                         [[NSUserDefaults standardUserDefaults]
                          boolForKey:kLTLastImageLockZoomKey];
 
-                        _edgeControlsContainer.alpha = edgeDetectionOn ? 1.0f : 0.0f;
+                        BOOL inverted =
+                        [[NSUserDefaults standardUserDefaults]
+                         boolForKey:kLTLastImageInvertedKey];
 
                         _findEdgesButton.hidden = edgeDetectionOn;
                         _removeEdgesButton.hidden = !edgeDetectionOn;
@@ -151,10 +179,16 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
                         _lockZoomButton.hidden = lockZoom;
                         _unlockZoomButton.hidden = !lockZoom;
 
+                        _invertButton.hidden = inverted;
+                        _invertOffButton.hidden = !inverted;
+
+                        _invertButton.enabled = edgeDetectionOn;
+                        _invertOffButton.enabled = edgeDetectionOn;
+
                         if (edgeDetectionOn) {
                             [self updateEdgeDetectionImage];
                         } else {
-                            self.view.backgroundColor = [UIColor whiteColor];
+                            _mainContainer.backgroundColor = [UIColor whiteColor];
                         }
 
                     } else {
@@ -180,16 +214,18 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    CGRect sliderFrame = _slideToCancel.view.frame;
+    static CGFloat padding = 16.0f;
+
+    CGRect sliderFrame = _mainContainer.bounds;
+    sliderFrame.size.width -= 2*padding;
+    sliderFrame.origin.x += padding;
 
     _landscape = UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation);
 
     if (_landscape) {
-        sliderFrame.origin.y = CGRectGetWidth(self.view.frame) - CGRectGetHeight(sliderFrame);
-        sliderFrame.size.width = CGRectGetHeight(self.view.frame);
+        sliderFrame.origin.y = CGRectGetWidth(_mainContainer.frame) - _forwardSliderImage.size.height - 16.0f;
     } else {
-        sliderFrame.origin.y = CGRectGetHeight(self.view.frame) - CGRectGetHeight(sliderFrame);
-        sliderFrame.size.width = CGRectGetWidth(self.view.frame);
+        sliderFrame.origin.y = CGRectGetHeight(_mainContainer.frame) - _forwardSliderImage.size.height - 16.0f;
     }
 
     _slideToCancel.view.frame = sliderFrame;
@@ -203,21 +239,9 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
      message:NSLocalizedString(@"This app works best if Multitasking Gestures are turned off. You can find the setting in the General section of System Preferences.", nil)];
 }
 
-- (UIView *)rotatingFooterView {
-    return _slideToCancel.view;
+- (NSUInteger) supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskLandscapeLeft | UIInterfaceOrientationMaskLandscapeRight;
 }
-
-//- (BOOL)shouldAutorotate {
-//    return YES;
-//}
-//
-//- (NSUInteger)supportedInterfaceOrientations {
-//    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
-//}
-//
-//- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
-//    return UIInterfaceOrientationMaskPortrait | UIInterfaceOrientationMaskPortraitUpsideDown;
-//}
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     if (_slideToCancel.view.alpha > 0.0f) {
@@ -227,9 +251,9 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
         CGRect sliderFrame = _slideToCancel.view.frame;
 
         if (_landscape) {
-            ypos = CGRectGetHeight(self.view.frame) - CGRectGetHeight(sliderFrame);
+            ypos = CGRectGetHeight(_mainContainer.frame) - CGRectGetHeight(sliderFrame) - 16.0f;
         } else {
-            ypos = CGRectGetWidth(self.view.frame) - CGRectGetHeight(sliderFrame);
+            ypos = CGRectGetWidth(_mainContainer.frame) - CGRectGetHeight(sliderFrame) - 16.0f;
         }
 
         sliderFrame.origin.y = ypos;
@@ -266,25 +290,25 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     _findEdgesButton.enabled = enabled;
     _removeEdgesButton.enabled = enabled;
     _invertButton.enabled = enabled;
+    _invertOffButton.enabled = enabled;
     _lockZoomButton.enabled = enabled;
     _unlockZoomButton.enabled = enabled;
+
+    void (^executionBlock)(void) = ^{
+        _findEdgesButton.alpha = alpha;
+        _removeEdgesButton.alpha = alpha;
+        _invertButton.alpha = alpha;
+        _invertOffButton.alpha = alpha;
+        _lockZoomButton.alpha = alpha;
+        _unlockZoomButton.alpha = alpha;
+    };
 
     if (animate) {
         [UIView
          animateWithDuration:.15f
-         animations:^{
-             _findEdgesButton.alpha = alpha;
-             _removeEdgesButton.alpha = alpha;
-             _invertButton.alpha = alpha;
-             _lockZoomButton.alpha = alpha;
-             _unlockZoomButton.alpha = alpha;
-         }];
+         animations:executionBlock];
     } else {
-        _findEdgesButton.alpha = alpha;
-        _removeEdgesButton.alpha = alpha;
-        _invertButton.alpha = alpha;
-        _lockZoomButton.alpha = alpha;
-        _unlockZoomButton.alpha = alpha;
+        executionBlock();
     }
 }
 
@@ -315,7 +339,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
          _selectPhotoGuard = NO;
 
-         self.view.backgroundColor = [UIColor whiteColor];
+         _mainContainer.backgroundColor = [UIColor whiteColor];
 
          [self setControlsEnabled:NO animate:YES];
 
@@ -374,24 +398,19 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
             [self updateEdgeDetectionImage];
 
-            self.view.backgroundColor = [UIColor whiteColor];
+            _mainContainer.backgroundColor = [UIColor whiteColor];
         }
 
-        [UIView
-         animateWithDuration:.15f
-         animations:^{
-             _edgeControlsContainer.alpha = controlsAlpha;
-         } completion:^(BOOL finished) {
+        _invertButton.enabled = !edgeDetectionOn;
+        _invertOffButton.enabled = !edgeDetectionOn;
+        _findEdgesButton.hidden = !edgeDetectionOn;
+        _removeEdgesButton.hidden = edgeDetectionOn;
 
-             _findEdgesButton.hidden = !edgeDetectionOn;
-             _removeEdgesButton.hidden = edgeDetectionOn;
+        [[NSUserDefaults standardUserDefaults]
+         setBool:!edgeDetectionOn forKey:kLTLastImageEdgeKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
 
-             [[NSUserDefaults standardUserDefaults]
-              setBool:!edgeDetectionOn forKey:kLTLastImageEdgeKey];
-             [[NSUserDefaults standardUserDefaults] synchronize];
-
-             _jinGuard = NO;
-         }];
+        _jinGuard = NO;
     }
 }
 
@@ -426,6 +445,9 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
          setBool:!inverted forKey:kLTLastImageInvertedKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
 
+        _invertButton.hidden = !inverted;
+        _invertOffButton.hidden = inverted;
+
         [self updateEdgeDetectionImage];
     }
 }
@@ -437,9 +459,9 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     };
 
     if(animated) {
-        self.view.userInteractionEnabled = NO;
+        _mainContainer.userInteractionEnabled = NO;
         [UIView animateWithDuration:.15f animations:doReset completion:^(BOOL finished) {
-            self.view.userInteractionEnabled = YES;
+            _mainContainer.userInteractionEnabled = YES;
         }];
     } else {
         doReset();
@@ -651,68 +673,65 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
 - (void)handleTap:(UITapGestureRecognizer *)gesture {
 
-    CGFloat ypos;
     CGFloat alpha;
 
     if (_slideToCancel.view.alpha > 0.0f) {
 
-        ypos = CGRectGetMaxY(_slideToCancel.view.frame);
-
         alpha = 0.0f;
     } else {
-
-        CGRect sliderFrame = _slideToCancel.view.frame;
-
-        if (_landscape) {
-            ypos = CGRectGetWidth(self.view.frame) - CGRectGetHeight(sliderFrame);
-        } else {
-            ypos = CGRectGetHeight(self.view.frame) - CGRectGetHeight(sliderFrame);
-        }
-
-        sliderFrame.origin.y = CGRectGetMaxY(_slideToCancel.view.frame);
-        _slideToCancel.view.frame = sliderFrame;
-        _slideToCancel.view.alpha = 1.0f;
 
         alpha = 1.0f;
     }
 
-    CGRect frame = _slideToCancel.view.frame;
-    frame.origin.y = ypos;
-
     [UIView
      animateWithDuration:.15f
      animations:^{
-         _slideToCancel.view.frame = frame;
-     } completion:^(BOOL finished) {
          _slideToCancel.view.alpha = alpha;
      }];
 }
 
 - (void)handleDoubleTap:(UITapGestureRecognizer *)recognizer {
-    [self reset:YES];
-}
 
-- (IBAction)edgeLowThresholdChanged:(id)sender {
-    _edgeLowThresholdLabel.text =
-    [NSString stringWithFormat:@"Thres: %.1f", _edgeLowThresholdSlider.value];
-    [self updateEdgeDetectionImage];
+    BOOL lockZoom =
+    [[NSUserDefaults standardUserDefaults]
+     boolForKey:kLTLastImageLockZoomKey];
+
+    if (lockZoom == NO) {
+        [self reset:YES];
+    }
 }
 
 - (void)updateEdgeDetectionImage {
 
+    __block UIImage *updatedImage = nil;
+
+    MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:_mainContainer];
+    hud.labelText = NSLocalizedString(@"Applying Filter...", nil);
+
+    [_mainContainer addSubview:hud];
+    [hud show:YES];
+
     BOOL inverted =
     [[NSUserDefaults standardUserDefaults]
      boolForKey:kLTLastImageInvertedKey];
-    
-    UIImage *updatedImage =
-    [[LTEdgeDetector sharedInstance]
-     applyEdgeDetection:_originalImage
-     lowThreshold:_edgeLowThresholdSlider.value
-     inverted:inverted];
 
-    self.view.backgroundColor = inverted ? [UIColor blackColor] : [UIColor whiteColor];
+    float delayInSeconds = .5f;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(void){
 
-    _imageView.image = updatedImage;
+        updatedImage =
+        [[LTEdgeDetector sharedInstance]
+         applyEdgeDetection:_originalImage
+         lowThreshold:kLTFindEdgesLowerThreshold
+         inverted:inverted];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            _mainContainer.backgroundColor = inverted ? [UIColor blackColor] : [UIColor whiteColor];
+            _imageView.image = updatedImage;
+            [hud hide:YES];
+        });
+    });
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
@@ -738,7 +757,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
          nil];
 
         actionSheet.actionSheetStyle = UIActionSheetStyleAutomatic;
-        [actionSheet showInView:self.view];
+        [actionSheet showInView:_mainContainer];
     }
 
 }
@@ -747,19 +766,34 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
 - (void)sliderReachedForwardPosition {
 
-    _locked = YES;
-
-    for (UIGestureRecognizer *gesture in self.view.gestureRecognizers) {
-        if (gesture != _mainViewTapRecognizer) {
-            gesture.enabled = NO;
+    for (UIGestureRecognizer *gesture in _mainContainer.gestureRecognizers) {
+        if (gesture != _tapRecognizer) {
+            gesture.enabled = YES;
         }
     }
 
     for (UIGestureRecognizer *gesture in _imageView.gestureRecognizers) {
-        if (gesture != _tapRecognizer) {
-            gesture.enabled = NO;
-        }
+        gesture.enabled = YES;
     }
+
+    [UIView
+     animateWithDuration:.15f
+     animations:^{
+         _slideToCancel.view.alpha = 0.0f;
+         _selectionContainer.alpha = 1.0f;
+     } completion:^(BOOL finished) {
+
+         _slideToCancel.reversed = YES;
+
+         [UIView
+          animateWithDuration:.15f
+          animations:^{
+              _slideToCancel.view.alpha = 1.0f;
+          }];
+     }];
+}
+
+- (void)sliderReachedReversePosition {
 
     [UIView
      animateWithDuration:.15f
@@ -767,26 +801,17 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
          _slideToCancel.view.alpha = 0.0f;
          _selectionContainer.alpha = 0.0f;
      } completion:^(BOOL finished) {
-         _slideToCancel.reversed = YES;
-     }];
-}
-
-- (void)sliderReachedReversePosition {
-    _locked = NO;
-    _slideToCancel.reversed = NO;
-
-    [UIView
-     animateWithDuration:.15f
-     animations:^{
-         _selectionContainer.alpha = 1.0f;
+         _slideToCancel.reversed = NO;
      }];
 
-    for (UIGestureRecognizer *gesture in self.view.gestureRecognizers) {
-        gesture.enabled = YES;
+    for (UIGestureRecognizer *gesture in _mainContainer.gestureRecognizers) {
+        if (gesture != _tapRecognizer) {
+            gesture.enabled = NO;
+        }
     }
 
     for (UIGestureRecognizer *gesture in _imageView.gestureRecognizers) {
-        gesture.enabled = YES;
+        gesture.enabled = NO;
     }
 }
 
@@ -868,6 +893,15 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
     _selectImageButton.hidden = YES;
     _clearImageButton.hidden = NO;
+    _selectImageButton.hidden = YES;
+    _clearImageButton.hidden = NO;
+    _lockZoomButton.hidden = NO;
+    _unlockZoomButton.hidden = YES;
+    _findEdgesButton.hidden = NO;
+    _removeEdgesButton.hidden = YES;
+    _invertButton.hidden = NO;
+    _invertOffButton.hidden = YES;
+    _invertButton.enabled = NO;
 
     [[NSUserDefaults standardUserDefaults]
      removeObjectForKey:kLTLastImageEdgeKey];
