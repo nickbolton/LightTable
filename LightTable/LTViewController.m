@@ -42,9 +42,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 @property (nonatomic, strong) UITapGestureRecognizer *mainViewDoubleTapRecognizer;
 @property (nonatomic, strong) ALAssetsLibrary *library;
 @property (nonatomic, strong) UIImage *originalImage;
-@property (nonatomic) CGPoint scaleCenter;
 @property (nonatomic) CGPoint touchCenter;
-@property (nonatomic) CGPoint rotationCenter;
 @property (nonatomic, strong) SlideToCancelViewController *slideToCancel;
 @end
 
@@ -450,23 +448,21 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
 - (void)handleTouches:(NSSet*)touches {
     self.touchCenter = CGPointZero;
-    if(touches.count < 2) return;
 
     [touches enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
         UITouch *touch = (UITouch*)obj;
         CGPoint touchLocation = [touch locationInView:self.imageView];
-        if (_landscape) {
-            self.touchCenter = CGPointMake(self.touchCenter.y + touchLocation.y, self.touchCenter.x +touchLocation.x);
-        } else {
-            self.touchCenter = CGPointMake(self.touchCenter.x + touchLocation.x, self.touchCenter.y +touchLocation.y);
-        }
+        self.touchCenter = CGPointMake(self.touchCenter.x + touchLocation.x, self.touchCenter.y +touchLocation.y);
     }];
 
-    if (_landscape) {
-        self.touchCenter = CGPointMake(self.touchCenter.y/touches.count, self.touchCenter.x/touches.count);
-    } else {
-        self.touchCenter = CGPointMake(self.touchCenter.x/touches.count, self.touchCenter.y/touches.count);
-    }
+    CGFloat x = self.touchCenter.x/touches.count;
+    CGFloat y = self.touchCenter.y/touches.count;
+
+    x = MIN(MAX(0.0f, x), CGRectGetWidth(self.imageView.frame));
+    y = MIN(MAX(0.0f, y), CGRectGetHeight(self.imageView.frame));
+
+    self.touchCenter = CGPointMake(x, y);
+
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -500,16 +496,13 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
 }
 
-- (void)handleRotation:(UIRotationGestureRecognizer*)recognizer
-{
+- (void)handleRotation:(UIRotationGestureRecognizer*)recognizer {
+
     if(recognizer.state == UIGestureRecognizerStateBegan ||
        recognizer.state == UIGestureRecognizerStateChanged) {
 
-        if(recognizer.state == UIGestureRecognizerStateBegan){
-            self.rotationCenter = self.touchCenter;
-        }
-        CGFloat deltaX = self.rotationCenter.x-self.imageView.bounds.size.width/2;
-        CGFloat deltaY = self.rotationCenter.y-self.imageView.bounds.size.height/2;
+        CGFloat deltaX = self.touchCenter.x-self.imageView.bounds.size.width/2;
+        CGFloat deltaY = self.touchCenter.y-self.imageView.bounds.size.height/2;
 
         CGAffineTransform transform =  CGAffineTransformTranslate(self.imageView.transform,deltaX,deltaY);
         transform = CGAffineTransformRotate(transform, recognizer.rotation);
@@ -520,7 +513,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     } else {
         [self saveImageTransformValues];
     }
-
 }
 
 - (void)handlePinch:(UIPinchGestureRecognizer *)recognizer {
@@ -532,12 +524,9 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     if (lockZoom == NO) {
         if(recognizer.state == UIGestureRecognizerStateBegan ||
            recognizer.state == UIGestureRecognizerStateChanged) {
-
-            if(recognizer.state == UIGestureRecognizerStateBegan){
-                self.scaleCenter = self.touchCenter;
-            }
-            CGFloat deltaX = self.scaleCenter.x-self.imageView.bounds.size.width/2.0;
-            CGFloat deltaY = self.scaleCenter.y-self.imageView.bounds.size.height/2.0;
+            
+            CGFloat deltaX = self.touchCenter.x-self.imageView.bounds.size.width/2.0;
+            CGFloat deltaY = self.touchCenter.y-self.imageView.bounds.size.height/2.0;
 
             CGAffineTransform transform =  CGAffineTransformTranslate(self.imageView.transform, deltaX, deltaY);
             transform = CGAffineTransformScale(transform, recognizer.scale, recognizer.scale);
