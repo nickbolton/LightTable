@@ -11,6 +11,7 @@
 #import "SlideToCancelViewController.h"
 #import "LTEdgeDetector.h"
 #import "UIAlertView+Utilities.h"
+#import <QuartzCore/QuartzCore.h>
 #import "UIView+Snapshot.h"
 #import "MBProgressHUD.h"
 
@@ -75,8 +76,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     _slideToCancel.delegate = self;
     _slideToCancel.forwardImage = _forwardSliderImage;
     _slideToCancel.reverseImage = reverseSliderImage;
-    _slideToCancel.forwardText = NSLocalizedString(@"Slide to lock", nil);
-    _slideToCancel.reverseText = NSLocalizedString(@"Slide to unlock", nil);
 
     _sliderLockButton.hidden = YES;
     _sliderUnlockButton.hidden = YES;
@@ -102,6 +101,10 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     [_imageView addGestureRecognizer:_panRecognizer];
     [_imageView addGestureRecognizer:_rotationRecognizer];
     [_imageView addGestureRecognizer:_pinchRecognizer];
+
+    _imageView.layer.borderWidth = 5;
+    _imageView.layer.borderColor = [UIColor clearColor].CGColor;
+    _imageView.layer.shouldRasterize = YES;
 
     [_mainContainer addGestureRecognizer:_tapRecognizer];
     [_mainContainer addGestureRecognizer:_doubleTapRecognizer];
