@@ -219,14 +219,11 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     CGRect sliderFrame = _mainContainer.bounds;
     sliderFrame.size.width -= 2*padding;
     sliderFrame.origin.x += padding;
+    sliderFrame.size.height = _forwardSliderImage.size.height;
 
     _landscape = UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation);
 
-    if (_landscape) {
-        sliderFrame.origin.y = CGRectGetWidth(_mainContainer.frame) - _forwardSliderImage.size.height - 16.0f;
-    } else {
-        sliderFrame.origin.y = CGRectGetHeight(_mainContainer.frame) - _forwardSliderImage.size.height - 16.0f;
-    }
+    sliderFrame.origin.y = CGRectGetHeight(_mainContainer.frame) - _forwardSliderImage.size.height - 32.0f;
 
     _slideToCancel.view.frame = sliderFrame;
     _slideToCancel.enabled = YES;
@@ -246,17 +243,9 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     if (_slideToCancel.view.alpha > 0.0f) {
 
-        CGFloat ypos;
-
         CGRect sliderFrame = _slideToCancel.view.frame;
 
-        if (_landscape) {
-            ypos = CGRectGetHeight(_mainContainer.frame) - CGRectGetHeight(sliderFrame) - 16.0f;
-        } else {
-            ypos = CGRectGetWidth(_mainContainer.frame) - CGRectGetHeight(sliderFrame) - 16.0f;
-        }
-
-        sliderFrame.origin.y = ypos;
+        sliderFrame.origin.y = CGRectGetHeight(_mainContainer.frame) - _forwardSliderImage.size.height - 32.0f;
 
         [UIView
          animateWithDuration:duration
@@ -275,6 +264,19 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     _slideToCancel.enabled = YES;
 
     _slideToCancel.enabled = enabled;
+
+    if (_slideToCancel.view.alpha > 0.0f) {
+
+        CGRect sliderFrame = _slideToCancel.view.frame;
+
+        sliderFrame.origin.y = CGRectGetHeight(_mainContainer.frame) - _forwardSliderImage.size.height - 32.0f;
+
+        [UIView
+         animateWithDuration:.15f
+         animations:^{
+             _slideToCancel.view.frame = sliderFrame;
+         }];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -776,20 +778,13 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
         gesture.enabled = YES;
     }
 
+    _slideToCancel.reversed = YES;
+
     [UIView
      animateWithDuration:.15f
      animations:^{
-         _slideToCancel.view.alpha = 0.0f;
          _selectionContainer.alpha = 1.0f;
-     } completion:^(BOOL finished) {
-
-         _slideToCancel.reversed = YES;
-
-         [UIView
-          animateWithDuration:.15f
-          animations:^{
-              _slideToCancel.view.alpha = 1.0f;
-          }];
+         _slideToCancel.view.alpha = 1.0f;
      }];
 }
 

@@ -17,7 +17,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <imageView contentMode="scaleToFill" id="EuT-S7-0Mg">
+                                    <imageView contentMode="scaleAspectFit" id="EuT-S7-0Mg">
                                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
