@@ -21,8 +21,70 @@
                                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                            <view hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" id="4hm-vL-j40">
+                                <rect key="frame" x="16" y="59" width="194" height="114"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="r1d-uz-0rX">
+                                        <rect key="frame" x="0.0" y="-114" width="194" height="47"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
+                                        <size key="titleShadowOffset" width="0.0" height="1"/>
+                                        <state key="normal" title="LIBRARY" image="icon_x.png" backgroundImage="btn_main.png">
+                                            <color key="titleColor" red="0.1960784314" green="0.20784313730000001" blue="0.21960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="selectFromLibrary:" destination="2" eventType="touchUpInside" id="ogP-dK-7mn"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="pob-NJ-bDu">
+                                        <rect key="frame" x="0.0" y="-59" width="194" height="47"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
+                                        <size key="titleShadowOffset" width="0.0" height="1"/>
+                                        <state key="normal" title="CAMERA" image="icon_x.png" backgroundImage="btn_main.png">
+                                            <color key="titleColor" red="0.1960784314" green="0.20784313730000001" blue="0.21960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="useCamera:" destination="2" eventType="touchUpInside" id="6rP-S8-ail"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" id="erL-4k-jb3">
+                                <rect key="frame" x="16" y="16" width="194" height="47"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="y1t-Ii-McD">
+                                        <rect key="frame" x="0.0" y="0.0" width="194" height="47"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
+                                        <size key="titleShadowOffset" width="0.0" height="1"/>
+                                        <state key="normal" title="CANCEL" image="icon_x.png" backgroundImage="btn_main.png">
+                                            <color key="titleColor" red="0.1960784314" green="0.20784313730000001" blue="0.21960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="cancelAddImage:" destination="2" eventType="touchUpInside" id="xdV-8t-nGG"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="QKs-pa-V1k">
-                                        <rect key="frame" x="16" y="16" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
@@ -34,11 +96,11 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="selectPhoto:" destination="2" eventType="touchUpInside" id="N30-im-VoK"/>
+                                            <action selector="addImage:" destination="2" eventType="touchUpInside" id="gdx-Cx-JUK"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="SJP-pY-u5M">
-                                        <rect key="frame" x="16" y="16" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
@@ -50,18 +112,18 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="selectPhoto:" destination="2" eventType="touchUpInside" id="l7U-Hm-0oV"/>
+                                            <action selector="addImage:" destination="2" eventType="touchUpInside" id="TnI-Qo-8Y0"/>
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" id="61N-mR-7wJ">
-                                <rect key="frame" x="815" y="0.0" width="209" height="219"/>
+                                <rect key="frame" x="815" y="16" width="209" height="203"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="OZ5-fX-6g3">
-                                        <rect key="frame" x="0.0" y="16" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
@@ -74,7 +136,7 @@
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="XaR-F9-QpW">
-                                        <rect key="frame" x="0.0" y="16" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <inset key="titleEdgeInsets" minX="-29" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -89,7 +151,7 @@
                                         </state>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="N0y-sO-MT3">
-                                        <rect key="frame" x="0.0" y="16" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
@@ -105,7 +167,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="ReZ-OM-FpG">
-                                        <rect key="frame" x="0.0" y="16" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
@@ -121,7 +183,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="uxW-gI-OZ1">
-                                        <rect key="frame" x="0.0" y="71" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="55" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
@@ -137,7 +199,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="iFo-X6-qtE">
-                                        <rect key="frame" x="0.0" y="71" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="55" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
@@ -153,7 +215,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Tem-0a-miy">
-                                        <rect key="frame" x="0.0" y="126" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="110" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
@@ -169,7 +231,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ZiG-sR-2bO">
-                                        <rect key="frame" x="0.0" y="126" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="110" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
@@ -196,11 +258,15 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <connections>
+                        <outlet property="addImageContainer" destination="4hm-vL-j40" id="PcL-ta-B3v"/>
+                        <outlet property="cameraButton" destination="pob-NJ-bDu" id="BBi-xj-9GE"/>
+                        <outlet property="cancelAddButton" destination="y1t-Ii-McD" id="vtR-HD-nFK"/>
                         <outlet property="clearImageButton" destination="SJP-pY-u5M" id="v7U-WG-IrV"/>
                         <outlet property="findEdgesButton" destination="ReZ-OM-FpG" id="zkv-AQ-JbD"/>
                         <outlet property="imageView" destination="EuT-S7-0Mg" id="Hlj-0b-Z9i"/>
                         <outlet property="invertButton" destination="uxW-gI-OZ1" id="8a5-3h-kGJ"/>
                         <outlet property="invertOffButton" destination="iFo-X6-qtE" id="M6N-8d-MbQ"/>
+                        <outlet property="libraryButton" destination="r1d-uz-0rX" id="8U9-t4-hhc"/>
                         <outlet property="lockZoomButton" destination="Tem-0a-miy" id="fz0-Yg-EYE"/>
                         <outlet property="mainContainer" destination="3FQ-Vp-Seg" id="bPr-8v-2CG"/>
                         <outlet property="removeEdgesButton" destination="N0y-sO-MT3" id="c5z-Ie-zvR"/>
@@ -233,15 +299,23 @@
         <class className="LTViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/LTViewController.h"/>
             <relationships>
+                <relationship kind="action" name="addImage:"/>
+                <relationship kind="action" name="blank:"/>
+                <relationship kind="action" name="cancelAddImage:"/>
                 <relationship kind="action" name="findEdges:"/>
                 <relationship kind="action" name="invertImage:"/>
-                <relationship kind="action" name="selectPhoto:"/>
+                <relationship kind="action" name="selectFromLibrary:"/>
                 <relationship kind="action" name="toggleLockZoom:"/>
+                <relationship kind="action" name="useCamera:"/>
+                <relationship kind="outlet" name="addImageContainer" candidateClass="UIView"/>
+                <relationship kind="outlet" name="cameraButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="cancelAddButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="clearImageButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="findEdgesButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
                 <relationship kind="outlet" name="invertButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="invertOffButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="libraryButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="lockZoomButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="mainContainer" candidateClass="UIView"/>
                 <relationship kind="outlet" name="removeEdgesButton" candidateClass="UIButton"/>

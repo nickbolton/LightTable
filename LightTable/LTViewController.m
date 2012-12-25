@@ -60,16 +60,57 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
     AudioServicesCreateSystemSoundID((__bridge CFURLRef)filePath, &_tickSoundID);
 
-    self.sliderLockButton.titleLabel.text = NSLocalizedString(@"SLIDE TO LOCK", nil);
-    self.sliderUnlockButton.titleLabel.text = NSLocalizedString(@"SLIDE TO UNLOCK", nil);
-    self.clearImageButton.titleLabel.text = NSLocalizedString(@"CLEAR IMAGE", nil);
-    self.selectImageButton.titleLabel.text = NSLocalizedString(@"ADD IMAGE", nil);
-    self.findEdgesButton.titleLabel.text = NSLocalizedString(@"OUTLINE", nil);
-    self.removeEdgesButton.titleLabel.text = NSLocalizedString(@"OUTLINE", nil);
-    self.invertButton.titleLabel.text = NSLocalizedString(@"NEGATIVE", nil);
-    self.invertOffButton.titleLabel.text = NSLocalizedString(@"NEGATIVE", nil);
-    self.lockZoomButton.titleLabel.text = NSLocalizedString(@"LOCK SCALE", nil);
-    self.unlockZoomButton.titleLabel.text = NSLocalizedString(@"UNLOCK SCALE", nil);
+    [self.sliderLockButton
+     setTitle:NSLocalizedString(@"SLIDE TO LOCK", nil)
+     forState:UIControlStateNormal];
+
+    [self.sliderUnlockButton
+     setTitle:NSLocalizedString(@"SLIDE TO UNLOCK", nil)
+     forState:UIControlStateNormal];
+
+    [self.clearImageButton
+     setTitle:NSLocalizedString(@"CLEAR IMAGE", nil)
+     forState:UIControlStateNormal];
+
+    [self.selectImageButton
+     setTitle:NSLocalizedString(@"ADD IMAGE", nil)
+     forState:UIControlStateNormal];
+
+    [self.findEdgesButton
+     setTitle:NSLocalizedString(@"OUTLINE", nil)
+     forState:UIControlStateNormal];
+
+    [self.removeEdgesButton
+     setTitle:NSLocalizedString(@"OUTLINE", nil)
+     forState:UIControlStateNormal];
+
+    [self.invertButton
+     setTitle:NSLocalizedString(@"NEGATIVE", nil)
+     forState:UIControlStateNormal];
+
+    [self.invertOffButton
+     setTitle:NSLocalizedString(@"NEGATIVE", nil)
+     forState:UIControlStateNormal];
+
+    [self.lockZoomButton
+     setTitle:NSLocalizedString(@"LOCK SCALE", nil)
+     forState:UIControlStateNormal];
+
+    [self.unlockZoomButton
+     setTitle:NSLocalizedString(@"UNLOCK SCALE", nil)
+     forState:UIControlStateNormal];
+
+    [self.libraryButton
+     setTitle:NSLocalizedString(@"LIBRARY", nil)
+     forState:UIControlStateNormal];
+
+    [self.cameraButton
+     setTitle:NSLocalizedString(@"CAMERA", nil)
+     forState:UIControlStateNormal];
+
+    [self.cancelAddButton
+     setTitle:NSLocalizedString(@"CANCEL", nil)
+     forState:UIControlStateNormal];
 
     self.forwardSliderImage = [UIImage imageWithData:[_sliderUnlockButton pngSnapshotData]];
     UIImage *reverseSliderImage = [UIImage imageWithData:[_sliderLockButton pngSnapshotData]];
@@ -357,7 +398,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
      }];
 }
 
-- (IBAction)selectPhoto:(id)sender {
+- (IBAction)addImage:(id)sender {
 
     if (_jinGuard == NO && _selectPhotoGuard == NO) {
         _selectPhotoGuard = YES;
@@ -744,27 +785,78 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     return YES;
 }
 
-#pragma mark - LTSelectionDelegate Conformance
-
 - (void)selectPhoto {
 
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        UIActionSheet *actionSheet =
-        [[UIActionSheet alloc]
-         initWithTitle:@""
-         delegate:self
-         cancelButtonTitle:nil
-         destructiveButtonTitle:nil
-         otherButtonTitles:
-         NSLocalizedString(@"Take Photo With Camera", nil),
-         NSLocalizedString(@"Select Photo From Library", nil),
-         NSLocalizedString(@"Cancel", nil),
-         nil];
+    if (_jinGuard == NO) {
+        _jinGuard = YES;
 
-        actionSheet.actionSheetStyle = UIActionSheetStyleAutomatic;
-        [actionSheet showInView:_mainContainer];
+        BOOL cameraAvailable =
+        [UIImagePickerController
+         isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+
+        _addImageContainer.hidden = NO;
+        _cameraButton.hidden = !cameraAvailable;
+
+        [UIView
+         animateWithDuration:.15f
+         animations:^{
+
+             CGRect frame = _libraryButton.frame;
+             frame.origin.y = 12.0f;
+             _libraryButton.frame = frame;
+
+             frame = _cameraButton.frame;
+             frame.origin.y = 67.0f;
+             _cameraButton.frame = frame;
+
+         } completion:^(BOOL finished) {
+
+             _jinGuard = NO;
+             _selectImageButton.hidden = YES;
+             _cancelAddButton.hidden = NO;
+         }];
     }
+}
 
+- (void)removeImageSelectionOptions {
+
+    if (_jinGuard == NO) {
+        _jinGuard = YES;
+
+        [UIView
+         animateWithDuration:.15f
+         animations:^{
+
+             CGRect frame = _libraryButton.frame;
+             frame.origin.y = -114.0f;
+             _libraryButton.frame = frame;
+
+             frame = _cameraButton.frame;
+             frame.origin.y = -59.0f;
+             _cameraButton.frame = frame;
+
+         } completion:^(BOOL finished) {
+
+             _jinGuard = NO;
+             _selectPhotoGuard = NO;
+             _selectImageButton.hidden = NO;
+             _cancelAddButton.hidden = YES;
+             _addImageContainer.hidden = YES;
+         }];
+    }
+}
+
+- (IBAction)selectFromLibrary:(id)sender {
+    [self selectPhotoFromLibrary];
+}
+
+- (IBAction)useCamera:(id)sender {
+    [self takePhotoWithCamera];
+}
+
+- (IBAction)cancelAddImage:(id)sender {
+
+    [self removeImageSelectionOptions];
 }
 
 #pragma mark - SlideToCancelDelegate Conformance
@@ -815,22 +907,6 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     }
 }
 
-#pragma mark - UIActionSheetDelegate Conformance
-
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 0) {
-        [self takePhotoWithCamera];
-    } else if (buttonIndex == 1) {
-        [self selectPhotoFromLibrary];
-    } else {
-        _selectPhotoGuard = NO;
-    }
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    _selectPhotoGuard = NO;
-}
-
 - (void)takePhotoWithCamera {
 
     UIImagePickerController *imagePickerController =
@@ -844,11 +920,9 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
     _imageSelectionPopoverController.delegate = self;
 
-    UIView *view = _selectImageButton.hidden ? _clearImageButton : _selectImageButton;
-
     [_imageSelectionPopoverController
-     presentPopoverFromRect:view.bounds
-     inView:view
+     presentPopoverFromRect:_cameraButton.bounds
+     inView:_cameraButton
      permittedArrowDirections:UIPopoverArrowDirectionLeft
      animated:YES];
 
@@ -867,11 +941,9 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
     _imageSelectionPopoverController.delegate = self;
 
-    UIView *view = _selectImageButton.hidden ? _clearImageButton : _selectImageButton;
-
     [_imageSelectionPopoverController
-     presentPopoverFromRect:view.bounds
-     inView:view
+     presentPopoverFromRect:_libraryButton.bounds
+     inView:_libraryButton
      permittedArrowDirections:UIPopoverArrowDirectionLeft
      animated:YES];
 
@@ -928,14 +1000,14 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
                   setObject:assetURL.absoluteString forKey:kLTLastImagePathKey];
                  [self removeImageTransformValues];
              }
-             _selectPhotoGuard = NO;
+             [self removeImageSelectionOptions];
          }];
     } else {
-        _selectPhotoGuard = NO;
 
         [[NSUserDefaults standardUserDefaults]
          setObject:assetURL.absoluteString forKey:kLTLastImagePathKey];
         [self removeImageTransformValues];
+        [self removeImageSelectionOptions];
     }
 }
 
@@ -943,7 +1015,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
     self.imageSelectionPopoverController = nil;
-    _selectPhotoGuard = NO;
+    [self removeImageSelectionOptions];
 }
 
 @end
