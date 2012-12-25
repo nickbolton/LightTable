@@ -463,7 +463,27 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 -(void)reset:(BOOL)animated {
 
     void (^doReset)(void) = ^{
-        self.imageView.transform = CGAffineTransformIdentity;
+
+        BOOL lockZoom =
+        [[NSUserDefaults standardUserDefaults]
+         boolForKey:kLTLastImageLockZoomKey];
+
+        if (lockZoom) {
+
+            CGAffineTransform transform = self.imageView.transform;
+
+            CGFloat a = transform.a;
+            CGFloat c = transform.c;
+
+            CGFloat scale = sqrtf(a*a+c*c);
+
+            transform = CGAffineTransformMakeScale(scale, scale);
+
+            self.imageView.transform = transform;
+
+        } else {
+            self.imageView.transform = CGAffineTransformIdentity;
+        }
     };
 
     if(animated) {
@@ -699,14 +719,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 }
 
 - (void)handleDoubleTap:(UITapGestureRecognizer *)recognizer {
-
-    BOOL lockZoom =
-    [[NSUserDefaults standardUserDefaults]
-     boolForKey:kLTLastImageLockZoomKey];
-
-    if (lockZoom == NO) {
-        [self reset:YES];
-    }
+    [self reset:YES];
 }
 
 - (void)updateEdgeDetectionImage {
