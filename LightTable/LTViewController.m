@@ -395,6 +395,9 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
             _imageView.image = self.originalImage;
 
+            _invertButton.hidden = NO;
+            _invertOffButton.hidden = YES;
+
         } else {
 
             // turning on
