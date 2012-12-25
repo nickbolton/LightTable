@@ -517,6 +517,8 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
 - (void)handlePinch:(UIPinchGestureRecognizer *)recognizer {
 
+    static CGFloat maxScale = 5.0f;
+
     BOOL lockZoom =
     [[NSUserDefaults standardUserDefaults]
      boolForKey:kLTLastImageLockZoomKey];
@@ -524,7 +526,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     if (lockZoom == NO) {
         if(recognizer.state == UIGestureRecognizerStateBegan ||
            recognizer.state == UIGestureRecognizerStateChanged) {
-            
+
             CGFloat deltaX = self.touchCenter.x-self.imageView.bounds.size.width/2.0;
             CGFloat deltaY = self.touchCenter.y-self.imageView.bounds.size.height/2.0;
 
@@ -532,7 +534,14 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
             transform = CGAffineTransformScale(transform, recognizer.scale, recognizer.scale);
             transform = CGAffineTransformTranslate(transform, -deltaX, -deltaY);
 
-            self.imageView.transform = transform;
+            CGFloat a = transform.a;
+            CGFloat c = transform.c;
+
+            CGFloat newScale = sqrtf(a*a+c*c);
+
+            if (newScale < maxScale) {
+                self.imageView.transform = transform;
+            }
 
             recognizer.scale = 1;
         } else {
