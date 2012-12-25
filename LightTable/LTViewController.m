@@ -790,6 +790,8 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
      animateWithDuration:.15f
      animations:^{
          _selectionContainer.alpha = 1.0f;
+         _selectImageButton.alpha = 1.0f;
+         _clearImageButton.alpha = 1.0f;
          _slideToCancel.view.alpha = 1.0f;
      }];
 }
@@ -800,6 +802,8 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
      animateWithDuration:.15f
      animations:^{
          _slideToCancel.view.alpha = 0.0f;
+         _selectImageButton.alpha = 0.0f;
+         _clearImageButton.alpha = 0.0f;
          _selectionContainer.alpha = 0.0f;
      } completion:^(BOOL finished) {
          _slideToCancel.reversed = NO;
@@ -850,7 +854,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     [_imageSelectionPopoverController
      presentPopoverFromRect:view.bounds
      inView:view
-     permittedArrowDirections:UIPopoverArrowDirectionRight
+     permittedArrowDirections:UIPopoverArrowDirectionLeft
      animated:YES];
 
 }
@@ -873,7 +877,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     [_imageSelectionPopoverController
      presentPopoverFromRect:view.bounds
      inView:view
-     permittedArrowDirections:UIPopoverArrowDirectionRight
+     permittedArrowDirections:UIPopoverArrowDirectionLeft
      animated:YES];
 
 }
