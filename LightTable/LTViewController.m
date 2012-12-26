@@ -33,6 +33,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
     BOOL _landscape;
     BOOL _jinGuard;
+    BOOL _locked;
     BOOL _selectPhotoGuard;
     SystemSoundID _tickSoundID;
 }
@@ -376,37 +377,40 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
 - (IBAction)blank:(id)sender {
 
-    [UIView
-     animateWithDuration:.15f
-     animations:^{
-         _imageView.alpha = 0.0f;
-     } completion:^(BOOL finished) {
+    if (_jinGuard == NO && _locked == NO) {
 
-         self.originalImage = nil;
-         self.outlinedImage = nil;
-         self.invertedOutlinedImage = nil;
+        [UIView
+         animateWithDuration:.15f
+         animations:^{
+             _imageView.alpha = 0.0f;
+         } completion:^(BOOL finished) {
 
-         _selectImageButton.hidden = NO;
-         _clearImageButton.hidden = YES;
+             self.originalImage = nil;
+             self.outlinedImage = nil;
+             self.invertedOutlinedImage = nil;
 
-         _imageView.image = nil;
+             _selectImageButton.hidden = NO;
+             _clearImageButton.hidden = YES;
 
-         _selectPhotoGuard = NO;
+             _imageView.image = nil;
 
-         _mainContainer.backgroundColor = [UIColor whiteColor];
+             _selectPhotoGuard = NO;
 
-         [self setControlsEnabled:NO animate:YES];
+             _mainContainer.backgroundColor = [UIColor whiteColor];
 
-         [self resetImageProperties];
-         [self reset:NO];
-
-         _imageView.alpha = 1.0f;
-     }];
+             [self setControlsEnabled:NO animate:YES];
+             
+             [self resetImageProperties];
+             [self reset:NO];
+             
+             _imageView.alpha = 1.0f;
+         }];
+    }
 }
 
 - (IBAction)addImage:(id)sender {
 
-    if (_jinGuard == NO && _selectPhotoGuard == NO) {
+    if (_jinGuard == NO && _selectPhotoGuard == NO && _locked == NO) {
         _selectPhotoGuard = YES;
         
         if (_imageView.image != nil) {
@@ -480,51 +484,57 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
 - (IBAction)toggleLockZoom:(id)sender {
 
-    BOOL lockZoom =
-    [[NSUserDefaults standardUserDefaults]
-     boolForKey:kLTLastImageLockZoomKey];
+    if (_jinGuard == NO && _locked == NO) {
+        BOOL lockZoom =
+        [[NSUserDefaults standardUserDefaults]
+         boolForKey:kLTLastImageLockZoomKey];
 
-    [[NSUserDefaults standardUserDefaults]
-     setBool:!lockZoom forKey:kLTLastImageLockZoomKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+        [[NSUserDefaults standardUserDefaults]
+         setBool:!lockZoom forKey:kLTLastImageLockZoomKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
 
-    _lockZoomButton.hidden = !lockZoom;
-    _unlockZoomButton.hidden = lockZoom;
-
-    [_lockZoomButton setNeedsDisplay];
+        _lockZoomButton.hidden = !lockZoom;
+        _unlockZoomButton.hidden = lockZoom;
+        
+        [_lockZoomButton setNeedsDisplay];
+    }
 }
 
 - (IBAction)invertImage:(id)sender {
 
-    BOOL edgeDetectionOn =
-    [[NSUserDefaults standardUserDefaults]
-     boolForKey:kLTLastImageEdgeKey];
-
-    if (edgeDetectionOn) {
-        BOOL inverted =
+    if (_jinGuard == NO && _locked == NO) {
+        BOOL edgeDetectionOn =
         [[NSUserDefaults standardUserDefaults]
-         boolForKey:kLTLastImageInvertedKey];
+         boolForKey:kLTLastImageEdgeKey];
 
-        inverted = !inverted;
+        if (edgeDetectionOn) {
+            BOOL inverted =
+            [[NSUserDefaults standardUserDefaults]
+             boolForKey:kLTLastImageInvertedKey];
 
-        [[NSUserDefaults standardUserDefaults]
-         setBool:inverted forKey:kLTLastImageInvertedKey];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+            inverted = !inverted;
 
-        _invertButton.hidden = inverted;
-        _invertOffButton.hidden = !inverted;
+            [[NSUserDefaults standardUserDefaults]
+             setBool:inverted forKey:kLTLastImageInvertedKey];
+            [[NSUserDefaults standardUserDefaults] synchronize];
 
-        if (inverted) {
-            if (_invertedOutlinedImage != nil) {
-                _imageView.image = _invertedOutlinedImage;
+            _invertButton.hidden = inverted;
+            _invertOffButton.hidden = !inverted;
+
+            if (inverted) {
+                if (_invertedOutlinedImage != nil) {
+                    _imageView.image = _invertedOutlinedImage;
+                    _mainContainer.backgroundColor = [UIColor blackColor];
+                } else {
+                    [self updateEdgeDetectionImage];
+                }
             } else {
-                [self updateEdgeDetectionImage];
-            }
-        } else {
-            if (_outlinedImage != nil) {
-                _imageView.image = _outlinedImage;
-            } else {
-                [self updateEdgeDetectionImage];
+                if (_outlinedImage != nil) {
+                    _imageView.image = _outlinedImage;
+                    _mainContainer.backgroundColor = [UIColor whiteColor];
+                } else {
+                    [self updateEdgeDetectionImage];
+                }
             }
         }
     }
@@ -880,11 +890,15 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 }
 
 - (IBAction)selectFromLibrary:(id)sender {
-    [self selectPhotoFromLibrary];
+    if (_jinGuard == NO && _locked == NO) {
+        [self selectPhotoFromLibrary];
+    }
 }
 
 - (IBAction)useCamera:(id)sender {
-    [self takePhotoWithCamera];
+    if (_jinGuard == NO && _locked == NO) {
+        [self takePhotoWithCamera];
+    }
 }
 
 - (IBAction)cancelAddImage:(id)sender {
@@ -893,6 +907,14 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 }
 
 #pragma mark - SlideToCancelDelegate Conformance
+
+- (void)startedSliding {
+    _jinGuard = YES;
+}
+
+- (void)stoppedSliding {
+    _jinGuard = NO;
+}
 
 - (void)sliderReachedForwardPosition {
 
@@ -905,6 +927,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     }
 
     _slideToCancel.reversed = YES;
+    _locked = NO;
 
     AudioServicesPlaySystemSound(_tickSoundID);
 
@@ -914,6 +937,8 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
          _selectionContainer.alpha = 1.0f;
          _selectImageButton.alpha = 1.0f;
          _clearImageButton.alpha = 1.0f;
+         _addImageContainer.alpha = 1.0f;
+         _cancelAddButton.alpha = 1.0f;
      }];
 }
 
@@ -925,9 +950,13 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
          _selectImageButton.alpha = 0.0f;
          _clearImageButton.alpha = 0.0f;
          _selectionContainer.alpha = 0.0f;
+         _addImageContainer.alpha = 0.0f;
+         _cancelAddButton.alpha = 0.0f;
      } completion:^(BOOL finished) {
          _slideToCancel.reversed = NO;
      }];
+
+    _locked = YES;
 
     AudioServicesPlaySystemSound(_tickSoundID);
 

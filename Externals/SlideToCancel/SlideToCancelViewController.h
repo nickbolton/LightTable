@@ -42,5 +42,7 @@
 @required
 - (void)sliderReachedForwardPosition;
 - (void)sliderReachedReversePosition;
+- (void)startedSliding;
+- (void)stoppedSliding;
 
 @end

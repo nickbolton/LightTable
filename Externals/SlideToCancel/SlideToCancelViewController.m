@@ -233,6 +233,8 @@ static const int animationFramesPerSec = 8;
 	if (touchIsDown) {
 		touchIsDown = NO;
 
+        [delegate stoppedSliding];
+
 		if (slider.value != 1.0)  //if the value is not the max, slide this bad boy back to zero
 		{
 			[slider setValue: 0 animated: YES];
@@ -256,6 +258,7 @@ static const int animationFramesPerSec = 8;
 
 - (void)sliderDown:(UISlider *)sender {
 	touchIsDown = YES;
+    [delegate startedSliding];
 }
 
 - (void)sliderChanged:(UISlider *)sender {
