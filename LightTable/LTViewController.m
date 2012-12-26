@@ -44,6 +44,8 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 @property (nonatomic, strong) UITapGestureRecognizer *doubleTapRecognizer;
 @property (nonatomic, strong) ALAssetsLibrary *library;
 @property (nonatomic, strong) UIImage *originalImage;
+@property (nonatomic, strong) UIImage *outlinedImage;
+@property (nonatomic, strong) UIImage *invertedOutlinedImage;
 @property (nonatomic, strong) UIImage *forwardSliderImage;
 @property (nonatomic) CGPoint touchCenter;
 @property (nonatomic, strong) SlideToCancelViewController *slideToCancel;
@@ -380,6 +382,10 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
          _imageView.alpha = 0.0f;
      } completion:^(BOOL finished) {
 
+         self.originalImage = nil;
+         self.outlinedImage = nil;
+         self.invertedOutlinedImage = nil;
+
          _selectImageButton.hidden = NO;
          _clearImageButton.hidden = YES;
 
@@ -441,13 +447,20 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
             _invertButton.hidden = NO;
             _invertOffButton.hidden = YES;
 
+            [[NSUserDefaults standardUserDefaults]
+             setBool:NO forKey:kLTLastImageInvertedKey];
+
         } else {
 
             // turning on
 
             controlsAlpha = 1.0f;
 
-            [self updateEdgeDetectionImage];
+            if (_outlinedImage != nil) {
+                _imageView.image = _outlinedImage;
+            } else {
+                [self updateEdgeDetectionImage];
+            }
 
             _mainContainer.backgroundColor = [UIColor whiteColor];
         }
@@ -492,14 +505,28 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
         [[NSUserDefaults standardUserDefaults]
          boolForKey:kLTLastImageInvertedKey];
 
+        inverted = !inverted;
+
         [[NSUserDefaults standardUserDefaults]
-         setBool:!inverted forKey:kLTLastImageInvertedKey];
+         setBool:inverted forKey:kLTLastImageInvertedKey];
         [[NSUserDefaults standardUserDefaults] synchronize];
 
-        _invertButton.hidden = !inverted;
-        _invertOffButton.hidden = inverted;
+        _invertButton.hidden = inverted;
+        _invertOffButton.hidden = !inverted;
 
-        [self updateEdgeDetectionImage];
+        if (inverted) {
+            if (_invertedOutlinedImage != nil) {
+                _imageView.image = _invertedOutlinedImage;
+            } else {
+                [self updateEdgeDetectionImage];
+            }
+        } else {
+            if (_outlinedImage != nil) {
+                _imageView.image = _outlinedImage;
+            } else {
+                [self updateEdgeDetectionImage];
+            }
+        }
     }
 }
 
@@ -773,6 +800,12 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
         dispatch_async(dispatch_get_main_queue(), ^{
 
+            if (inverted) {
+                self.invertedOutlinedImage = updatedImage;
+            } else {
+                self.outlinedImage = updatedImage;
+            }
+            
             _mainContainer.backgroundColor = inverted ? [UIColor blackColor] : [UIColor whiteColor];
             _imageView.image = updatedImage;
             [hud hide:YES];

@@ -18,7 +18,10 @@ using namespace cv;
                    lowThreshold:(CGFloat)lowThreshold
                        inverted:(BOOL)inverted {
 
+    NSLog(@"orient: %d", originalImage.imageOrientation);
+    
     Mat src = [originalImage cvMat];
+
     Mat src_gray;
     Mat dst, detected_edges;
 
@@ -39,67 +42,40 @@ using namespace cv;
 
     src.copyTo( dst, detected_edges);
 
+    Mat result_mat;
+
+    if (originalImage.imageOrientation == UIImageOrientationDown) {
+
+        Point2f src_center(dst.cols/2.0f, dst.rows/2.0f);
+        Mat rot_mat = getRotationMatrix2D(src_center, M_PI_2, 1.0f);
+        warpAffine(dst, result_mat, rot_mat, dst.size());
+        
+    } else {
+        result_mat = dst;
+    }
+
     UIImage *result;
 
     if (inverted == NO) {
 
-        Mat dst_inverted;
+        Mat result_inverted;
 
-        threshold(dst, dst_inverted, 0, 255, THRESH_BINARY_INV);
+        threshold(result_mat, result_inverted, 0, 255, THRESH_BINARY_INV);
 
-        result = [UIImage imageWithCVMat:dst_inverted];
+        result = [UIImage
+                  imageWithCVMat:result_inverted
+                  orientation:originalImage.imageOrientation];
     } else {
 
         Mat bw;
         
-        threshold(dst, bw, 0, 255, THRESH_BINARY);
+        threshold(result_mat, bw, 0, 255, THRESH_BINARY);
 
-        result = [UIImage imageWithCVMat:bw];
+        result = [UIImage
+                  imageWithCVMat:bw
+                  orientation:originalImage.imageOrientation];
     }
 
-    return result;
-}
-
-- (UIImage *)blah:(UIImage *)originalImage
-     lowThreshold:(CGFloat)lowThreshold
-         inverted:(BOOL)inverted {
-
-    Mat src = [originalImage cvMat];
-    Mat dst, detected_edges, blured;
-
-    /// Create a matrix of the same type and size as src (for dst)
-    dst.create( src.size(), src.type() );
-
-    /// Reduce noise with a kernel 3x3
-    blur( src, blured, Size2i(3,3) );
-
-    /// Canny detector
-    Canny( blured, detected_edges, lowThreshold, lowThreshold*3);
-
-    /// Convert the image to grayscale
-    cvtColor( detected_edges, detected_edges, CV_BGR2GRAY );
-
-    //    Mat bw = gray > 128;
-
-    /// Using Canny's output as a mask, we display our result
-    dst = Scalar::all(0);
-
-    src.copyTo( dst, detected_edges);
-
-    UIImage *result;
-
-    if (inverted == NO) {
-
-        Mat dst_inverted;
-
-        threshold(dst, dst_inverted, 0, 255, THRESH_BINARY_INV);
-
-        result = [UIImage imageWithCVMat:dst_inverted];
-    } else {
-
-        result = [UIImage imageWithCVMat:dst];
-    }
-    
     return result;
 }
 

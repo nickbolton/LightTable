@@ -10,7 +10,7 @@
 
 @implementation UIImage (Utilities)
 
-- (cv::Mat)cvMat {
+- (Mat)cvMat {
 
     CGColorSpaceRef colorSpace = CGImageGetColorSpace(self.CGImage);
     CGFloat cols = self.size.width;
@@ -29,11 +29,12 @@
 
     CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), self.CGImage);
     CGContextRelease(contextRef);
-    
+
     return cvMat;
 }
 
-+ (UIImage *)imageWithCVMat:(const cv::Mat&)cvMat {
++ (UIImage *)imageWithCVMat:(const Mat&)cvMat
+                orientation:(UIImageOrientation)orientation {
 
     NSData *data = [NSData dataWithBytes:cvMat.data length:cvMat.elemSize() * cvMat.total()];
 
@@ -59,7 +60,12 @@
                                         false,                                          // Should interpolate
                                         kCGRenderingIntentDefault);                     // Intent
 
-    UIImage *image = [[UIImage alloc] initWithCGImage:imageRef];
+    UIImage *image =
+    [[UIImage alloc]
+     initWithCGImage:imageRef
+     scale:1.0f
+     orientation:orientation];
+
     CGImageRelease(imageRef);
     CGDataProviderRelease(provider);
     CGColorSpaceRelease(colorSpace);

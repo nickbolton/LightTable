@@ -9,10 +9,13 @@
 #import <UIKit/UIKit.h>
 #import <opencv2/opencv.hpp>
 
+using namespace cv;
+
 @interface UIImage (Utilities)
 
-- (cv::Mat)cvMat;
+- (Mat)cvMat;
 
-+ (UIImage *)imageWithCVMat:(const cv::Mat&)cvMat;
++ (UIImage *)imageWithCVMat:(const Mat&)cvMat
+                orientation:(UIImageOrientation)orientation;
 
 @end
