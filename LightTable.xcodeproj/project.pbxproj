@@ -14,6 +14,8 @@
 		FE351C7316868853000FB0DE /* sliderTrack.png in Resources */ = {isa = PBXBuildFile; fileRef = FE351C6E16868853000FB0DE /* sliderTrack.png */; };
 		FE351C7416868853000FB0DE /* SlideToCancelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE351C7016868853000FB0DE /* SlideToCancelViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -w -Xanalyzer -analyzer-disable-checker"; }; };
 		FE351C82168699F4000FB0DE /* UIAlertView+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = FE351C81168699F4000FB0DE /* UIAlertView+Utilities.m */; };
+		FE438F2B168C90A4007F99C0 /* UIColor+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = FE438F2A168C90A4007F99C0 /* UIColor+Utilities.m */; };
+		FE438F2F168C9117007F99C0 /* UIButton+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = FE438F2E168C9117007F99C0 /* UIButton+Utilities.m */; };
 		FE88866F16898E920006D58E /* btn_main.png in Resources */ = {isa = PBXBuildFile; fileRef = FE88865916898E920006D58E /* btn_main.png */; };
 		FE88867016898E920006D58E /* btn_main@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE88865A16898E920006D58E /* btn_main@2x.png */; };
 		FE88867516898E920006D58E /* icon_lock_active.png in Resources */ = {isa = PBXBuildFile; fileRef = FE88865F16898E920006D58E /* icon_lock_active.png */; };
@@ -68,6 +70,10 @@
 		FE351C7016868853000FB0DE /* SlideToCancelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideToCancelViewController.m; sourceTree = "<group>"; };
 		FE351C80168699F4000FB0DE /* UIAlertView+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+Utilities.h"; sourceTree = "<group>"; };
 		FE351C81168699F4000FB0DE /* UIAlertView+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+Utilities.m"; sourceTree = "<group>"; };
+		FE438F29168C90A4007F99C0 /* UIColor+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Utilities.h"; sourceTree = "<group>"; };
+		FE438F2A168C90A4007F99C0 /* UIColor+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Utilities.m"; sourceTree = "<group>"; };
+		FE438F2D168C9117007F99C0 /* UIButton+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Utilities.h"; sourceTree = "<group>"; };
+		FE438F2E168C9117007F99C0 /* UIButton+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Utilities.m"; sourceTree = "<group>"; };
 		FE88865916898E920006D58E /* btn_main.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = btn_main.png; path = images/btn_main.png; sourceTree = "<group>"; };
 		FE88865A16898E920006D58E /* btn_main@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "btn_main@2x.png"; path = "images/btn_main@2x.png"; sourceTree = "<group>"; };
 		FE88865F16898E920006D58E /* icon_lock_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_lock_active.png; path = images/icon_lock_active.png; sourceTree = "<group>"; };
@@ -187,6 +193,10 @@
 				FE351C81168699F4000FB0DE /* UIAlertView+Utilities.m */,
 				FEEAE2DC16874A1C00CBA401 /* UIImage+Utilities.h */,
 				FEEAE2DF16874A3700CBA401 /* UIImage+Utilities.mm */,
+				FE438F29168C90A4007F99C0 /* UIColor+Utilities.h */,
+				FE438F2A168C90A4007F99C0 /* UIColor+Utilities.m */,
+				FE438F2D168C9117007F99C0 /* UIButton+Utilities.h */,
+				FE438F2E168C9117007F99C0 /* UIButton+Utilities.m */,
 				FE1A09E31689874700C5C63F /* UIView+Snapshot.h */,
 				FE1A09E41689874700C5C63F /* UIView+Snapshot.m */,
 			);
@@ -389,6 +399,8 @@
 				FEAF93C71689F6720026294D /* MBProgressHUD.m in Sources */,
 				FEAF93CA1689FB460026294D /* LTImageView.m in Sources */,
 				FEAF93CD1689FCC00026294D /* LTView.m in Sources */,
+				FE438F2B168C90A4007F99C0 /* UIColor+Utilities.m in Sources */,
+				FE438F2F168C9117007F99C0 /* UIButton+Utilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

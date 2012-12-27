@@ -300,7 +300,6 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/LTViewController.h"/>
             <relationships>
                 <relationship kind="action" name="addImage:"/>
-                <relationship kind="action" name="blank:"/>
                 <relationship kind="action" name="cancelAddImage:"/>
                 <relationship kind="action" name="findEdges:"/>
                 <relationship kind="action" name="invertImage:"/>

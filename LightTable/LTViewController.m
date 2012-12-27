@@ -14,6 +14,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import "UIView+Snapshot.h"
 #import "MBProgressHUD.h"
+#import "UIColor+Utilities.h"
+#import "UIButton+Utilities.h"
 #import <AudioToolbox/AudioToolbox.h>
 
 NSString * const kLTLastImagePathKey = @"last-image-path";
@@ -63,57 +65,60 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
     AudioServicesCreateSystemSoundID((__bridge CFURLRef)filePath, &_tickSoundID);
 
-    [self.sliderLockButton
-     setTitle:NSLocalizedString(@"SLIDE TO LOCK", nil)
-     forState:UIControlStateNormal];
+    UIFont *buttonFont =
+    [UIFont fontWithName:@"HelveticaNeue-Bold" size:15.0f];
+    UIColor *buttonTitleColor = [UIColor colorWithRGBHex:0x323538];
+    UIColor *buttonShadowColor = [UIColor colorWithWhite:1.0f alpha:.5f];
+    CGSize buttonShadowOffset = CGSizeMake(0.0f, 1.0f);
+    NSArray *buttonStates = @[@(UIControlStateNormal), @(UIControlStateHighlighted), @(UIControlStateSelected)];
 
-    [self.sliderUnlockButton
-     setTitle:NSLocalizedString(@"SLIDE TO UNLOCK", nil)
-     forState:UIControlStateNormal];
+    NSArray *buttons = @[
+    _sliderLockButton,
+    _sliderUnlockButton,
+    _clearImageButton,
+    _selectImageButton,
+    _findEdgesButton,
+    _removeEdgesButton,
+    _invertButton,
+    _invertOffButton,
+    _lockZoomButton,
+    _unlockZoomButton,
+    _libraryButton,
+    _cameraButton,
+    _cancelAddButton,
+    ];
 
-    [self.clearImageButton
-     setTitle:NSLocalizedString(@"CLEAR IMAGE", nil)
-     forState:UIControlStateNormal];
+    NSArray *buttonTitles = @[
+    NSLocalizedString(@"SLIDE TO LOCK", nil),
+    NSLocalizedString(@"SLIDE TO UNLOCK", nil),
+    NSLocalizedString(@"CLEAR IMAGE", nil),
+    NSLocalizedString(@"ADD IMAGE", nil),
+    NSLocalizedString(@"OUTLINE", nil),
+    NSLocalizedString(@"OUTLINE", nil),
+    NSLocalizedString(@"NEGATIVE", nil),
+    NSLocalizedString(@"NEGATIVE", nil),
+    NSLocalizedString(@"LOCK SCALE", nil),
+    NSLocalizedString(@"UNLOCK SCALE", nil),
+    NSLocalizedString(@"LIBRARY", nil),
+    NSLocalizedString(@"CAMERA", nil),
+    NSLocalizedString(@"CANCEL", nil),
+    ];
 
-    [self.selectImageButton
-     setTitle:NSLocalizedString(@"ADD IMAGE", nil)
-     forState:UIControlStateNormal];
+    NSAssert(buttons.count == buttonTitles.count, @"buttons.count != buttonTitles");
 
-    [self.findEdgesButton
-     setTitle:NSLocalizedString(@"OUTLINE", nil)
-     forState:UIControlStateNormal];
+    for (NSInteger i = 0; i < buttons.count; i++) {
 
-    [self.removeEdgesButton
-     setTitle:NSLocalizedString(@"OUTLINE", nil)
-     forState:UIControlStateNormal];
+        UIButton *button = [buttons objectAtIndex:i];
+        NSString *title = [buttonTitles objectAtIndex:i];
 
-    [self.invertButton
-     setTitle:NSLocalizedString(@"NEGATIVE", nil)
-     forState:UIControlStateNormal];
-
-    [self.invertOffButton
-     setTitle:NSLocalizedString(@"NEGATIVE", nil)
-     forState:UIControlStateNormal];
-
-    [self.lockZoomButton
-     setTitle:NSLocalizedString(@"LOCK SCALE", nil)
-     forState:UIControlStateNormal];
-
-    [self.unlockZoomButton
-     setTitle:NSLocalizedString(@"UNLOCK SCALE", nil)
-     forState:UIControlStateNormal];
-
-    [self.libraryButton
-     setTitle:NSLocalizedString(@"LIBRARY", nil)
-     forState:UIControlStateNormal];
-
-    [self.cameraButton
-     setTitle:NSLocalizedString(@"CAMERA", nil)
-     forState:UIControlStateNormal];
-
-    [self.cancelAddButton
-     setTitle:NSLocalizedString(@"CANCEL", nil)
-     forState:UIControlStateNormal];
+        [button
+         configureWithTitle:title
+         titleColor:buttonTitleColor
+         font:buttonFont
+         titleShadowColor:buttonShadowColor
+         shadowOffset:buttonShadowOffset
+         forControlStates:buttonStates];
+    }
 
     self.forwardSliderImage = [UIImage imageWithData:[_sliderUnlockButton pngSnapshotData]];
     UIImage *reverseSliderImage = [UIImage imageWithData:[_sliderLockButton pngSnapshotData]];
