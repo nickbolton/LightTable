@@ -154,10 +154,13 @@ static const int animationFramesPerSec = 8;
 	slider.value = 0.0;
 	
 	// Set the slider action methods
-	[slider addTarget:self 
-			   action:@selector(sliderUp:) 
+	[slider addTarget:self
+			   action:@selector(sliderUp:)
 	 forControlEvents:UIControlEventTouchUpInside];
-	[slider addTarget:self 
+	[slider addTarget:self
+			   action:@selector(sliderUp:)
+	 forControlEvents:UIControlEventTouchUpOutside];
+	[slider addTarget:self
 			   action:@selector(sliderDown:) 
 	 forControlEvents:UIControlEventTouchDown];
 	[slider addTarget:self 
