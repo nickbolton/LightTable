@@ -295,37 +295,6 @@
         <image name="icon_plus.png" width="45" height="45"/>
         <image name="icon_x.png" width="45" height="45"/>
     </resources>
-    <classes>
-        <class className="LTViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/LTViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="addImage:"/>
-                <relationship kind="action" name="cancelAddImage:"/>
-                <relationship kind="action" name="findEdges:"/>
-                <relationship kind="action" name="invertImage:"/>
-                <relationship kind="action" name="selectFromLibrary:"/>
-                <relationship kind="action" name="toggleLockZoom:"/>
-                <relationship kind="action" name="useCamera:"/>
-                <relationship kind="outlet" name="addImageContainer" candidateClass="UIView"/>
-                <relationship kind="outlet" name="cameraButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="cancelAddButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="clearImageButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="findEdgesButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="invertButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="invertOffButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="libraryButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="lockZoomButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="mainContainer" candidateClass="UIView"/>
-                <relationship kind="outlet" name="removeEdgesButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="selectImageButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="selectionContainer" candidateClass="UIView"/>
-                <relationship kind="outlet" name="sliderLockButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="sliderUnlockButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="unlockZoomButton" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

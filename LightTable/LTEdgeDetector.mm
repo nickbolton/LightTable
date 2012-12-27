@@ -19,7 +19,10 @@ using namespace cv;
                        inverted:(BOOL)inverted {
 
     NSLog(@"orient: %d", originalImage.imageOrientation);
-    
+    NSLog(@"scale: %f", originalImage.scale);
+    NSLog(@"size: %@", NSStringFromCGSize(originalImage.size));
+    NSLog(@"resizingMode: %d", originalImage.resizingMode);
+
     Mat src = [originalImage cvMat];
 
     Mat src_gray;
@@ -75,6 +78,11 @@ using namespace cv;
                   imageWithCVMat:bw
                   orientation:originalImage.imageOrientation];
     }
+
+    NSLog(@"resulting orient: %d", result.imageOrientation);
+    NSLog(@"resulting scale: %f", result.scale);
+    NSLog(@"resulting size: %@", NSStringFromCGSize(result.size));
+    NSLog(@"resulting  resizingMode: %d", result.resizingMode);
 
     return result;
 }

@@ -16,6 +16,12 @@
     CGFloat cols = self.size.width;
     CGFloat rows = self.size.height;
 
+    if (self.imageOrientation == UIImageOrientationLeft ||
+        self.imageOrientation == UIImageOrientationRight) {
+        cols = self.size.height;
+        rows = self.size.width;
+    }
+
     cv::Mat cvMat(rows, cols, CV_8UC4); // 8 bits per component, 4 channels
 
     CGContextRef contextRef = CGBitmapContextCreate(cvMat.data,                 // Pointer to backing data
