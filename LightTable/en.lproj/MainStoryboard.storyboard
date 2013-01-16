@@ -8,7 +8,7 @@
         <!--View Controller-->
         <scene sceneID="4">
             <objects>
-                <viewController id="2" customClass="LTViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LTViewController" id="2" customClass="LTViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -33,7 +33,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
-                                        <state key="normal" title="LIBRARY" image="icon_x.png" backgroundImage="btn_main.png">
+                                        <state key="normal" title="LIBRARY" image="icon_library.png" backgroundImage="btn_main.png">
                                             <color key="titleColor" red="0.1960784314" green="0.20784313730000001" blue="0.21960784310000001" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="titleShadowColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
                                         </state>
@@ -49,7 +49,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
-                                        <state key="normal" title="CAMERA" image="icon_x.png" backgroundImage="btn_main.png">
+                                        <state key="normal" title="CAMERA" image="icon_camera.png" backgroundImage="btn_main.png">
                                             <color key="titleColor" red="0.1960784314" green="0.20784313730000001" blue="0.21960784310000001" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="titleShadowColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
                                         </state>
@@ -119,7 +119,7 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" id="61N-mR-7wJ">
-                                <rect key="frame" x="815" y="16" width="209" height="203"/>
+                                <rect key="frame" x="815" y="16" width="209" height="148"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="OZ5-fX-6g3">
@@ -182,40 +182,8 @@
                                             <action selector="findEdges:" destination="2" eventType="touchUpInside" id="oLn-ub-9O6"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="uxW-gI-OZ1">
-                                        <rect key="frame" x="0.0" y="55" width="194" height="47"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
-                                        <size key="titleShadowOffset" width="0.0" height="1"/>
-                                        <state key="normal" title="NEGATIVE" image="icon_negative.png" backgroundImage="btn_main.png">
-                                            <color key="titleColor" red="0.19607843137254902" green="0.20784313725490197" blue="0.2196078431372549" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="titleShadowColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
-                                        </state>
-                                        <state key="highlighted">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="invertImage:" destination="2" eventType="touchUpInside" id="5Hj-xQ-1sp"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="iFo-X6-qtE">
-                                        <rect key="frame" x="0.0" y="55" width="194" height="47"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
-                                        <size key="titleShadowOffset" width="0.0" height="1"/>
-                                        <state key="normal" title="NEGATIVE" image="icon_negative_active.png" backgroundImage="btn_main.png">
-                                            <color key="titleColor" red="0.1960784314" green="0.20784313730000001" blue="0.21960784310000001" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="titleShadowColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
-                                        </state>
-                                        <state key="highlighted">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="invertImage:" destination="2" eventType="touchUpInside" id="RvY-en-l4O"/>
-                                        </connections>
-                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Tem-0a-miy">
-                                        <rect key="frame" x="0.0" y="110" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="55" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
@@ -231,7 +199,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ZiG-sR-2bO">
-                                        <rect key="frame" x="0.0" y="110" width="194" height="47"/>
+                                        <rect key="frame" x="0.0" y="55" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="1"/>
@@ -264,8 +232,6 @@
                         <outlet property="clearImageButton" destination="SJP-pY-u5M" id="v7U-WG-IrV"/>
                         <outlet property="findEdgesButton" destination="ReZ-OM-FpG" id="zkv-AQ-JbD"/>
                         <outlet property="imageView" destination="EuT-S7-0Mg" id="Hlj-0b-Z9i"/>
-                        <outlet property="invertButton" destination="uxW-gI-OZ1" id="8a5-3h-kGJ"/>
-                        <outlet property="invertOffButton" destination="iFo-X6-qtE" id="M6N-8d-MbQ"/>
                         <outlet property="libraryButton" destination="r1d-uz-0rX" id="8U9-t4-hhc"/>
                         <outlet property="lockZoomButton" destination="Tem-0a-miy" id="fz0-Yg-EYE"/>
                         <outlet property="mainContainer" destination="3FQ-Vp-Seg" id="bPr-8v-2CG"/>
@@ -281,20 +247,137 @@
             </objects>
             <point key="canvasLocation" x="-430" y="-211"/>
         </scene>
+        <!--Tracing Warning View Controller-->
+        <scene sceneID="Nyp-MZ-njj">
+            <objects>
+                <viewController storyboardIdentifier="LTTracingWarningViewController" id="nsN-jW-7uP" customClass="LTTracingWarningViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="DOS-cI-llI">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" id="19b-eU-SlF">
+                                <rect key="frame" x="169" y="206" width="685" height="357"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Mbf-zg-rQl">
+                                        <rect key="frame" x="0.0" y="0.0" width="685" height="256"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <attributedString key="attributedText">
+                                            <fragment>
+                                                <string key="content">Please Trace Responsibly:
+</string>
+                                                <attributes>
+                                                    <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <font key="NSFont" size="24" name="HelveticaNeue-Bold"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineSpacing="7"/>
+                                                </attributes>
+                                            </fragment>
+                                            <fragment>
+                                                <string key="content">We strongly recommend using only a soft drawing pencil when tracing on the iPad to prevent any damage that might be caused from sharp tools, bleeding inks, spilled paints, etc.
+</string>
+                                                <attributes>
+                                                    <font key="NSFont" size="24" name="HelveticaNeue"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineSpacing="7"/>
+                                                </attributes>
+                                            </fragment>
+                                            <fragment>
+                                                <string key="content">
+We cannot be responsible for any damage you might cause to your iPad while using this app. Thanks, and happy tracing.</string>
+                                                <attributes>
+                                                    <font key="NSFont" size="24" name="HelveticaNeue"/>
+                                                    <font key="NSOriginalFont" size="24" name="HelveticaNeue"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" lineSpacing="7"/>
+                                                </attributes>
+                                            </fragment>
+                                        </attributedString>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="h67-ON-mHP">
+                                        <rect key="frame" x="491" y="310" width="194" height="47"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
+                                        <size key="titleShadowOffset" width="0.0" height="1"/>
+                                        <state key="normal" title="PENCILS ONLY!" backgroundImage="btn_main.png">
+                                            <color key="titleColor" red="0.1960784314" green="0.20784313730000001" blue="0.21960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="home:" destination="nsN-jW-7uP" eventType="touchUpInside" id="LTm-9C-svd"/>
+                                            <segue destination="2" kind="modal" modalTransitionStyle="crossDissolve" id="Mwm-Kw-wNP"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Z9Q-gY-0Sl"/>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="g8D-Qc-mTa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-430" y="697"/>
+        </scene>
     </scenes>
     <resources>
         <image name="btn_main.png" width="194" height="47"/>
         <image name="icon_arrow_left.png" width="45" height="45"/>
         <image name="icon_arrow_right.png" width="45" height="45"/>
+        <image name="icon_camera.png" width="45" height="45"/>
+        <image name="icon_library.png" width="45" height="45"/>
         <image name="icon_lock.png" width="45" height="45"/>
         <image name="icon_lock_active.png" width="45" height="45"/>
-        <image name="icon_negative.png" width="45" height="45"/>
-        <image name="icon_negative_active.png" width="45" height="45"/>
         <image name="icon_outline.png" width="45" height="45"/>
         <image name="icon_outline_active.png" width="45" height="45"/>
         <image name="icon_plus.png" width="45" height="45"/>
         <image name="icon_x.png" width="45" height="45"/>
     </resources>
+    <classes>
+        <class className="LTTracingWarningViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/LTTracingWarningViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="home:"/>
+                <relationship kind="outlet" name="mainViewController" candidateClass="LTViewController"/>
+            </relationships>
+        </class>
+        <class className="LTViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/LTViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="addImage:"/>
+                <relationship kind="action" name="cancelAddImage:"/>
+                <relationship kind="action" name="findEdges:"/>
+                <relationship kind="action" name="invertImage:"/>
+                <relationship kind="action" name="selectFromLibrary:"/>
+                <relationship kind="action" name="toggleLockZoom:"/>
+                <relationship kind="action" name="useCamera:"/>
+                <relationship kind="outlet" name="addImageContainer" candidateClass="UIView"/>
+                <relationship kind="outlet" name="cameraButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="cancelAddButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="clearImageButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="findEdgesButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="invertButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="invertOffButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="libraryButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="lockZoomButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="mainContainer" candidateClass="UIView"/>
+                <relationship kind="outlet" name="removeEdgesButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="selectImageButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="selectionContainer" candidateClass="UIView"/>
+                <relationship kind="outlet" name="sliderLockButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="sliderUnlockButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="unlockZoomButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

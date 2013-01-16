@@ -7,10 +7,28 @@
 //
 
 #import "LTAppDelegate.h"
+#import "LTTracingWarningViewController.h"
+
+NSString * const kLTPencilWarningShownKey = @"warning-shown";
 
 @implementation LTAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
+    BOOL warningShown =
+    [[NSUserDefaults standardUserDefaults] boolForKey:kLTPencilWarningShownKey];
+
+    if (warningShown == NO) {
+
+        UIStoryboard *storyboard =
+        [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+
+        LTTracingWarningViewController *tracingWarningViewController =
+        [storyboard instantiateViewControllerWithIdentifier:@"LTTracingWarningViewController"];
+
+        self.window.rootViewController = tracingWarningViewController;
+    }
+
     return YES;
 }
 							
