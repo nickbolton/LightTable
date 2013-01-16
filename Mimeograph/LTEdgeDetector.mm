@@ -1,6 +1,6 @@
 //
 //  LTEdgeDetector.m
-//  LightTable
+//  Mimeograph
 //
 //  Created by Nick Bolton on 12/23/12.
 //  Copyright 2012 Pixelbleed. All rights reserved.

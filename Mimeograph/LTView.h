@@ -1,6 +1,6 @@
 //
 //  LTView.h
-//  LightTable
+//  Mimeograph
 //
 //  Created by Nick Bolton on 12/25/12.
 //  Copyright (c) 2012 Pixelbleed. All rights reserved.

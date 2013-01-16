@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:LightTable.xcodeproj">
+      location = "self:Mimeograph.xcodeproj">
    </FileRef>
 </Workspace>

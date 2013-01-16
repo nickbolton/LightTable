@@ -1,6 +1,6 @@
 //
 //  LTTracingWarningViewController.m
-//  LightTable
+//  Mimeograph
 //
 //  Created by Nick Bolton on 1/15/13.
 //  Copyright (c) 2013 Pixelbleed. All rights reserved.
