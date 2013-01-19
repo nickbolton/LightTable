@@ -34,6 +34,8 @@
 @property (nonatomic, retain) UIImage *forwardImage;
 @property (nonatomic, retain) UIImage *reverseImage;
 @property (nonatomic, assign, getter = isReversed) BOOL reversed;
+@property (nonatomic, assign) BOOL tapToSlide;
+@property (nonatomic, assign) BOOL tapToBounce;
 
 @end
 

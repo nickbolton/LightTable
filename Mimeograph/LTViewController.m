@@ -132,6 +132,8 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     _slideToCancel.delegate = self;
     _slideToCancel.forwardImage = _forwardSliderImage;
     _slideToCancel.reverseImage = reverseSliderImage;
+    _slideToCancel.tapToBounce = NO;
+    _slideToCancel.tapToSlide = YES;
 
     _sliderLockButton.hidden = YES;
     _sliderUnlockButton.hidden = YES;
@@ -923,6 +925,9 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
 - (void)sliderReachedForwardPosition {
 
+    _slideToCancel.tapToBounce = NO;
+    _slideToCancel.tapToSlide = YES;
+
     for (UIGestureRecognizer *gesture in _mainContainer.gestureRecognizers) {
         gesture.enabled = YES;
     }
@@ -948,6 +953,9 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 }
 
 - (void)sliderReachedReversePosition {
+
+    _slideToCancel.tapToBounce = YES;
+    _slideToCancel.tapToSlide = NO;
 
     [UIView
      animateWithDuration:.15f

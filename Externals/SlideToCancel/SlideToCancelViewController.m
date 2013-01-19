@@ -15,7 +15,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import "SlideToCancelViewController.h"
 
-@interface SlideToCancelViewController() {
+@interface SlideToCancelViewController() <UIGestureRecognizerDelegate> {
+
+    CGFloat _touchDownValue;
+    BOOL _touchValueChanged;
 
 }
 
@@ -28,6 +31,7 @@
 static const CGFloat gradientWidth = 0.2;
 static const CGFloat gradientDimAlpha = 0.5;
 static const int animationFramesPerSec = 8;
+static const CGFloat maxValue = 1.0f;
 
 @implementation SlideToCancelViewController
 
@@ -105,6 +109,62 @@ static const int animationFramesPerSec = 8;
 //     }];
 }
 
+- (void)handleTap {
+
+    if (_tapToSlide) {
+//        [slider setValue:slider.maximumValue animated:YES];
+
+        [UIView
+         animateWithDuration:.25f
+         animations:^{
+             slider.value = slider.maximumValue;
+         } completion:^(BOOL finished) {
+             //tell the delagate we are slid all the way to the right
+
+             if (_reversed) {
+                 [delegate sliderReachedReversePosition];
+
+             } else {
+                 [delegate sliderReachedForwardPosition];
+
+             }
+         }];
+
+    } else if (_tapToBounce) {
+
+        [UIView
+         animateWithDuration:.15f
+         animations:^{
+
+             slider.value = slider.maximumValue * .1f;
+         } completion:^(BOOL finished) {
+
+
+             [UIView
+              animateWithDuration:.15f
+              animations:^{
+
+                  slider.value = 0.0f;
+              } completion:^(BOOL finished) {
+
+                  [UIView
+                   animateWithDuration:.1f
+                   animations:^{
+
+                       slider.value = slider.maximumValue * .03f;
+                   } completion:^(BOOL finished) {
+
+                       [UIView
+                        animateWithDuration:.15f
+                        animations:^{
+                            slider.value = 0.0f;
+                        }];
+                   }];
+              }];
+         }];
+    }
+}
+
 - (UILabel *)label {
 	// Access the view, which will force loadView to be called
 	// if it hasn't already been, which will create the label
@@ -149,7 +209,7 @@ static const int animationFramesPerSec = 8;
 	[slider setMinimumTrackImage:[UIImage imageNamed:@"sliderMaxMin-02.png"] forState:UIControlStateNormal];
 	[slider setMaximumTrackImage:[UIImage imageNamed:@"sliderMaxMin-02.png"] forState:UIControlStateNormal];
 	slider.minimumValue = 0.0;
-	slider.maximumValue = 1.0;
+	slider.maximumValue = maxValue;
 	slider.continuous = YES;
 	slider.value = 0.0;
 	
@@ -236,38 +296,46 @@ static const int animationFramesPerSec = 8;
 	if (touchIsDown) {
 		touchIsDown = NO;
 
-        [delegate stoppedSliding];
+        if (_touchValueChanged == NO) {
+            // tap event
+            [self handleTap];
+        } else {
 
-		if (slider.value != 1.0)  //if the value is not the max, slide this bad boy back to zero
-		{
-			[slider setValue: 0 animated: YES];
-            label.alpha = 1.0;
-            [self startTimer];
-		}
-		else {
-			//tell the delagate we are slid all the way to the right
+            [delegate stoppedSliding];
 
-            if (_reversed) {
-                [delegate sliderReachedReversePosition];
-
-            } else {
-                [delegate sliderReachedForwardPosition];
-
+            if (slider.value != maxValue)  //if the value is not the max, slide this bad boy back to zero
+            {
+                [slider setValue: 0 animated: YES];
+                label.alpha = 1.0;
+                [self startTimer];
             }
-            
-		}
+            else {
+                //tell the delagate we are slid all the way to the right
+
+                if (_reversed) {
+                    [delegate sliderReachedReversePosition];
+                    
+                } else {
+                    [delegate sliderReachedForwardPosition];
+                    
+                }
+                
+            }
+        }
 	}
 }
 
 - (void)sliderDown:(UISlider *)sender {
 	touchIsDown = YES;
+    _touchDownValue = slider.value;
+    _touchValueChanged = NO;
     [delegate startedSliding];
 }
 
 - (void)sliderChanged:(UISlider *)sender {
 	// Fade the text as the slider moves to the right. This code makes the
 	// text totally dissapear when the slider is 35% of the way to the right.
-	label.alpha = MAX(0.0, 1.0 - (slider.value * 3.5));
+	label.alpha = MAX(0.0, maxValue - (slider.value * 3.5));
 	
 	// Stop the animation if the slider moved off the zero point
 	if (slider.value != 0) {
@@ -275,6 +343,9 @@ static const int animationFramesPerSec = 8;
 		[label.layer setNeedsDisplay];
 	}
 
+    if (_touchDownValue != slider.value) {
+        _touchValueChanged = YES;
+    }
 }
 
 // animationTimer methods
@@ -409,6 +480,11 @@ static const int animationFramesPerSec = 8;
 	
 	// Re-render the label text
 	[label.layer setNeedsDisplay];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
 }
 
 - (void)dealloc {
