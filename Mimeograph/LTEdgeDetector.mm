@@ -25,7 +25,7 @@ using namespace cv;
 
     Mat src = [originalImage cvMat];
 
-    Mat src_gray;
+    Mat src_gray, src_gray2;
     Mat dst, detected_edges;
 
     /// Create a matrix of the same type and size as src (for dst)
@@ -65,8 +65,11 @@ using namespace cv;
 
         threshold(result_mat, result_inverted, 0, 255, THRESH_BINARY_INV);
 
+        /// Convert the image to grayscale
+        cvtColor(result_inverted, src_gray2, CV_BGR2GRAY );
+
         result = [UIImage
-                  imageWithCVMat:result_inverted
+                  imageWithCVMat:src_gray2
                   orientation:originalImage.imageOrientation];
     } else {
 
