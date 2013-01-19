@@ -18,4 +18,6 @@ using namespace cv;
 + (UIImage *)imageWithCVMat:(const Mat&)cvMat
                 orientation:(UIImageOrientation)orientation;
 
+- (UIImage *)resizeImageToSize:(CGSize)size;
+
 @end

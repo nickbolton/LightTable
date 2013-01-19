@@ -991,7 +991,8 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     imagePickerController.delegate = self;
 
     self.imageSelectionPopoverController =
-    [[UIPopoverController alloc] initWithContentViewController:imagePickerController];
+    [[UIPopoverController alloc]
+     initWithContentViewController:imagePickerController];
 
     _imageSelectionPopoverController.delegate = self;
 
@@ -1012,8 +1013,9 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     imagePickerController.delegate = self;
 
     self.imageSelectionPopoverController =
-    [[UIPopoverController alloc] initWithContentViewController:imagePickerController];
-
+    [[UIPopoverController alloc]
+     initWithContentViewController:imagePickerController];
+    
     _imageSelectionPopoverController.delegate = self;
 
     [_imageSelectionPopoverController

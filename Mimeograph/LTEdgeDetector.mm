@@ -18,10 +18,13 @@ using namespace cv;
                    lowThreshold:(CGFloat)lowThreshold
                        inverted:(BOOL)inverted {
 
-    NSLog(@"orient: %d", originalImage.imageOrientation);
-    NSLog(@"scale: %f", originalImage.scale);
-    NSLog(@"size: %@", NSStringFromCGSize(originalImage.size));
-    NSLog(@"resizingMode: %d", originalImage.resizingMode);
+    UIImage *scaledDownImage = originalImage;
+    CGSize maxSize = originalImage.imageOrientation == UIImageOrientationDown ?
+    CGSizeMake(320.0f, 480.0f) : CGSizeMake(480.0f, 320.0f);
+
+    if (scaledDownImage.size.width > maxSize.width || scaledDownImage.size.height > maxSize.height) {
+        scaledDownImage = [scaledDownImage resizeImageToSize:maxSize];
+    }
 
     Mat src = [originalImage cvMat];
 
@@ -81,11 +84,6 @@ using namespace cv;
                   imageWithCVMat:bw
                   orientation:originalImage.imageOrientation];
     }
-
-    NSLog(@"resulting orient: %d", result.imageOrientation);
-    NSLog(@"resulting scale: %f", result.scale);
-    NSLog(@"resulting size: %@", NSStringFromCGSize(result.size));
-    NSLog(@"resulting  resizingMode: %d", result.resizingMode);
 
     return result;
 }
