@@ -109,6 +109,45 @@ static const CGFloat maxValue = 1.0f;
 //     }];
 }
 
+- (void)bounce {
+
+    [UIView
+     animateWithDuration:.15f
+     animations:^{
+
+         slider.value = slider.maximumValue * .1f;
+     } completion:^(BOOL finished) {
+
+
+         [UIView
+          animateWithDuration:.15f
+          animations:^{
+
+              slider.value = 0.0f;
+          } completion:^(BOOL finished) {
+
+              [self halfBounce];
+          }];
+     }];
+}
+
+- (void)halfBounce {
+
+    [UIView
+     animateWithDuration:.1f
+     animations:^{
+
+         slider.value = slider.maximumValue * .03f;
+     } completion:^(BOOL finished) {
+
+         [UIView
+          animateWithDuration:.15f
+          animations:^{
+              slider.value = 0.0f;
+          }];
+     }];
+}
+
 - (void)handleTap {
 
     if (_tapToSlide) {
@@ -132,36 +171,7 @@ static const CGFloat maxValue = 1.0f;
 
     } else if (_tapToBounce) {
 
-        [UIView
-         animateWithDuration:.15f
-         animations:^{
-
-             slider.value = slider.maximumValue * .1f;
-         } completion:^(BOOL finished) {
-
-
-             [UIView
-              animateWithDuration:.15f
-              animations:^{
-
-                  slider.value = 0.0f;
-              } completion:^(BOOL finished) {
-
-                  [UIView
-                   animateWithDuration:.1f
-                   animations:^{
-
-                       slider.value = slider.maximumValue * .03f;
-                   } completion:^(BOOL finished) {
-
-                       [UIView
-                        animateWithDuration:.15f
-                        animations:^{
-                            slider.value = 0.0f;
-                        }];
-                   }];
-              }];
-         }];
+        [self bounce];
     }
 }
 
@@ -292,6 +302,7 @@ static const CGFloat maxValue = 1.0f;
 
 // UISlider actions
 - (void)sliderUp:(UISlider *)sender {
+
 	//filter out duplicate sliderUp events
 	if (touchIsDown) {
 		touchIsDown = NO;
@@ -305,6 +316,23 @@ static const CGFloat maxValue = 1.0f;
 
             if (slider.value != maxValue)  //if the value is not the max, slide this bad boy back to zero
             {
+
+                CGFloat currentValue = slider.value;
+
+                [UIView
+                 animateWithDuration:.15f
+                 animations:^{
+
+                     slider.value = 0;
+                 } completion:^(BOOL finished) {
+
+                     if (currentValue > slider.maximumValue * .1f) {
+                         [self bounce];
+                     } else if (currentValue > slider.maximumValue * .03f) {
+                         [self halfBounce];
+                     }
+                 }];
+
                 [slider setValue: 0 animated: YES];
                 label.alpha = 1.0;
                 [self startTimer];
@@ -326,13 +354,16 @@ static const CGFloat maxValue = 1.0f;
 }
 
 - (void)sliderDown:(UISlider *)sender {
+
 	touchIsDown = YES;
     _touchDownValue = slider.value;
     _touchValueChanged = NO;
     [delegate startedSliding];
+
 }
 
 - (void)sliderChanged:(UISlider *)sender {
+
 	// Fade the text as the slider moves to the right. This code makes the
 	// text totally dissapear when the slider is 35% of the way to the right.
 	label.alpha = MAX(0.0, maxValue - (slider.value * 3.5));

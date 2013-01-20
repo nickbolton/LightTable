@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FE21F4A116AC2D7300481374 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE21F4A016AC2D7300481374 /* QuartzCore.framework */; };
 		FE23184D16A6381900842EF1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE23181116A6381900842EF1 /* Default-568h@2x.png */; };
 		FE23184E16A6381900842EF1 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = FE23181216A6381900842EF1 /* Default.png */; };
 		FE23184F16A6381900842EF1 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE23181316A6381900842EF1 /* Default@2x.png */; };
@@ -76,6 +77,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FE21F4A016AC2D7300481374 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		FE23181116A6381900842EF1 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		FE23181216A6381900842EF1 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		FE23181316A6381900842EF1 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE21F4A116AC2D7300481374 /* QuartzCore.framework in Frameworks */,
 				FEAF93D6168A472D0026294D /* AudioToolbox.framework in Frameworks */,
 				FEC3934116872ED800CD5F4E /* opencv2.framework in Frameworks */,
 				FE351C6316865AA9000FB0DE /* AssetsLibrary.framework in Frameworks */,
@@ -333,6 +336,7 @@
 		FE9DBCC116794E73009E5B75 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FE21F4A016AC2D7300481374 /* QuartzCore.framework */,
 				FEAF93D5168A472D0026294D /* AudioToolbox.framework */,
 				FEC3934016872ED800CD5F4E /* opencv2.framework */,
 				FE351C6216865AA9000FB0DE /* AssetsLibrary.framework */,
