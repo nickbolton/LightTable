@@ -15,6 +15,8 @@ NSString * const kLTPencilWarningShownKey = @"warning-shown";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
+    [[UIScreen mainScreen] setBrightness:1.0f];
+
     BOOL warningShown =
     [[NSUserDefaults standardUserDefaults] boolForKey:kLTPencilWarningShownKey];
 
