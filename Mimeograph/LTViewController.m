@@ -1064,7 +1064,6 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
     self.imageSelectionPopoverController = nil;
-    [self removeImageSelectionOptions];
 }
 
 @end
