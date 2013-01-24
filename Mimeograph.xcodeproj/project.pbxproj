@@ -63,11 +63,8 @@
 		FE23189716A639C100842EF1 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE23188F16A639C100842EF1 /* Icon@2x.png */; };
 		FE23189816A639C100842EF1 /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = FE23189016A639C100842EF1 /* iTunesArtwork.png */; };
 		FE23189916A639C100842EF1 /* iTunesArtwork@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FE23189116A639C100842EF1 /* iTunesArtwork@2x.png */; };
+		FE31106416B0BD1D002442C7 /* LTSliderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE31106316B0BD1D002442C7 /* LTSliderViewController.m */; };
 		FE351C6316865AA9000FB0DE /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE351C6216865AA9000FB0DE /* AssetsLibrary.framework */; };
-		FE351C7116868853000FB0DE /* sliderMaxMin-02.png in Resources */ = {isa = PBXBuildFile; fileRef = FE351C6C16868853000FB0DE /* sliderMaxMin-02.png */; };
-		FE351C7216868853000FB0DE /* sliderThumb.png in Resources */ = {isa = PBXBuildFile; fileRef = FE351C6D16868853000FB0DE /* sliderThumb.png */; };
-		FE351C7316868853000FB0DE /* sliderTrack.png in Resources */ = {isa = PBXBuildFile; fileRef = FE351C6E16868853000FB0DE /* sliderTrack.png */; };
-		FE351C7416868853000FB0DE /* SlideToCancelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE351C7016868853000FB0DE /* SlideToCancelViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -w -Xanalyzer -analyzer-disable-checker"; }; };
 		FE9DBCC316794E73009E5B75 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE9DBCC216794E73009E5B75 /* UIKit.framework */; };
 		FE9DBCC516794E73009E5B75 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE9DBCC416794E73009E5B75 /* Foundation.framework */; };
 		FE9DBCC716794E73009E5B75 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE9DBCC616794E73009E5B75 /* CoreGraphics.framework */; };
@@ -145,12 +142,9 @@
 		FE23188F16A639C100842EF1 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = SOURCE_ROOT; };
 		FE23189016A639C100842EF1 /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = SOURCE_ROOT; };
 		FE23189116A639C100842EF1 /* iTunesArtwork@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iTunesArtwork@2x.png"; sourceTree = SOURCE_ROOT; };
+		FE31106216B0BD1D002442C7 /* LTSliderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LTSliderViewController.h; sourceTree = "<group>"; };
+		FE31106316B0BD1D002442C7 /* LTSliderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LTSliderViewController.m; sourceTree = "<group>"; };
 		FE351C6216865AA9000FB0DE /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
-		FE351C6C16868853000FB0DE /* sliderMaxMin-02.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sliderMaxMin-02.png"; sourceTree = "<group>"; };
-		FE351C6D16868853000FB0DE /* sliderThumb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sliderThumb.png; sourceTree = "<group>"; };
-		FE351C6E16868853000FB0DE /* sliderTrack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sliderTrack.png; sourceTree = "<group>"; };
-		FE351C6F16868853000FB0DE /* SlideToCancelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideToCancelViewController.h; sourceTree = "<group>"; };
-		FE351C7016868853000FB0DE /* SlideToCancelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideToCancelViewController.m; sourceTree = "<group>"; };
 		FE9DBCBE16794E73009E5B75 /* Mimeograph.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mimeograph.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE9DBCC216794E73009E5B75 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FE9DBCC416794E73009E5B75 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -290,27 +284,16 @@
 				FE23183C16A6381900842EF1 /* LTView.m */,
 				FE23183D16A6381900842EF1 /* LTViewController.h */,
 				FE23183E16A6381900842EF1 /* LTViewController.m */,
+				FE31106216B0BD1D002442C7 /* LTSliderViewController.h */,
+				FE31106316B0BD1D002442C7 /* LTSliderViewController.m */,
 			);
 			name = Main;
-			sourceTree = "<group>";
-		};
-		FE351C6B16868853000FB0DE /* SlideToCancel */ = {
-			isa = PBXGroup;
-			children = (
-				FE351C6C16868853000FB0DE /* sliderMaxMin-02.png */,
-				FE351C6D16868853000FB0DE /* sliderThumb.png */,
-				FE351C6E16868853000FB0DE /* sliderTrack.png */,
-				FE351C6F16868853000FB0DE /* SlideToCancelViewController.h */,
-				FE351C7016868853000FB0DE /* SlideToCancelViewController.m */,
-			);
-			path = SlideToCancel;
 			sourceTree = "<group>";
 		};
 		FE535C52168657BD0044BC70 /* Externals */ = {
 			isa = PBXGroup;
 			children = (
 				FEAF93C41689F6720026294D /* MBProgressHUD */,
-				FE351C6B16868853000FB0DE /* SlideToCancel */,
 			);
 			path = Externals;
 			sourceTree = "<group>";
@@ -408,9 +391,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE351C7116868853000FB0DE /* sliderMaxMin-02.png in Resources */,
-				FE351C7216868853000FB0DE /* sliderThumb.png in Resources */,
-				FE351C7316868853000FB0DE /* sliderTrack.png in Resources */,
 				FE23184D16A6381900842EF1 /* Default-568h@2x.png in Resources */,
 				FE23184E16A6381900842EF1 /* Default.png in Resources */,
 				FE23184F16A6381900842EF1 /* Default@2x.png in Resources */,
@@ -464,7 +444,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE351C7416868853000FB0DE /* SlideToCancelViewController.m in Sources */,
 				FEAF93C71689F6720026294D /* MBProgressHUD.m in Sources */,
 				FE23186C16A6381900842EF1 /* LTAppDelegate.m in Sources */,
 				FE23186D16A6381900842EF1 /* LTEdgeDetector.mm in Sources */,
@@ -478,6 +457,7 @@
 				FE23187716A6381900842EF1 /* UIColor+Utilities.m in Sources */,
 				FE23187816A6381900842EF1 /* UIImage+Utilities.mm in Sources */,
 				FE23187916A6381900842EF1 /* UIView+Snapshot.m in Sources */,
+				FE31106416B0BD1D002442C7 /* LTSliderViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

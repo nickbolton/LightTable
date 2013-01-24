@@ -247,6 +247,42 @@
             </objects>
             <point key="canvasLocation" x="-430" y="-211"/>
         </scene>
+        <!--Slider View Controller-->
+        <scene sceneID="hhs-Wh-W0m">
+            <objects>
+                <viewController storyboardIdentifier="LTSliderViewController" id="U13-Jw-QIi" customClass="LTSliderViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Zsa-41-woU">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" id="LgD-0I-Ciq">
+                                <rect key="frame" x="16" y="689" width="992" height="47"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <subviews>
+                                    <imageView contentMode="scaleToFill" image="btn_main.png" id="Qpt-30-kXa">
+                                        <rect key="frame" x="798" y="0.0" width="194" height="47"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    </view>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
+                    <connections>
+                        <outlet property="sliderButton" destination="Qpt-30-kXa" id="AZ1-FO-gUC"/>
+                        <outlet property="sliderContainer" destination="LgD-0I-Ciq" id="4FP-rX-jNw"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Up8-bC-ajB" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="631" y="-211"/>
+        </scene>
         <!--Tracing Warning View Controller-->
         <scene sceneID="Nyp-MZ-njj">
             <objects>
@@ -341,6 +377,13 @@ We cannot be responsible for any damage you might cause to your iPad while using
         <image name="icon_x.png" width="45" height="45"/>
     </resources>
     <classes>
+        <class className="LTSliderViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/LTSliderViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="sliderButton" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="sliderContainer" candidateClass="UIView"/>
+            </relationships>
+        </class>
         <class className="LTTracingWarningViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/LTTracingWarningViewController.h"/>
             <relationships>

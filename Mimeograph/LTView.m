@@ -30,7 +30,6 @@
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
 
     UITouch *touch = touches.anyObject;
 

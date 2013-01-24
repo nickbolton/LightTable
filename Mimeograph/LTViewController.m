@@ -8,7 +8,7 @@
 
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "LTViewController.h"
-#import "SlideToCancelViewController.h"
+#import "LTSliderViewController.h"
 #import "LTEdgeDetector.h"
 #import "UIAlertView+Utilities.h"
 #import <QuartzCore/QuartzCore.h>
@@ -31,7 +31,7 @@ NSString * const kLTLastImageEdgeKey = @"last-image-edge";
 CGFloat const kLTFindEdgesLowerThreshold = 20.0f;
 
 @interface LTViewController () <
-UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverControllerDelegate, UIActionSheetDelegate, UIGestureRecognizerDelegate, SlideToCancelDelegate> {
+UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverControllerDelegate, LTSliderDelegate, UIActionSheetDelegate, UIGestureRecognizerDelegate> {
 
     BOOL _landscape;
     BOOL _jinGuard;
@@ -49,9 +49,8 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 @property (nonatomic, strong) UIImage *originalImage;
 @property (nonatomic, strong) UIImage *outlinedImage;
 @property (nonatomic, strong) UIImage *invertedOutlinedImage;
-@property (nonatomic, strong) UIImage *forwardSliderImage;
 @property (nonatomic) CGPoint touchCenter;
-@property (nonatomic, strong) SlideToCancelViewController *slideToCancel;
+@property (nonatomic, strong) LTSliderViewController *sliderController;
 @end
 
 @implementation LTViewController
@@ -120,25 +119,37 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
          forControlStates:buttonStates];
     }
 
-    self.forwardSliderImage = [UIImage imageWithData:[_sliderUnlockButton pngSnapshotData]];
+    UIImage *forwardSliderImage = [UIImage imageWithData:[_sliderUnlockButton pngSnapshotData]];
     UIImage *reverseSliderImage = [UIImage imageWithData:[_sliderLockButton pngSnapshotData]];
-    reverseSliderImage =
-    [UIImage
-     imageWithCGImage:reverseSliderImage.CGImage
-     scale:1.0f
-     orientation:UIImageOrientationDown];
+//    reverseSliderImage =
+//    [UIImage
+//     imageWithCGImage:reverseSliderImage.CGImage
+//     scale:1.0f
+//     orientation:UIImageOrientationDown];
 
-    _slideToCancel = [[SlideToCancelViewController alloc] init];
-    _slideToCancel.delegate = self;
-    _slideToCancel.forwardImage = _forwardSliderImage;
-    _slideToCancel.reverseImage = reverseSliderImage;
-    _slideToCancel.tapToBounce = YES;
-    _slideToCancel.tapToSlide = NO;
+    UIStoryboard *storyboard =
+    [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+
+    self.sliderController =
+    [storyboard instantiateViewControllerWithIdentifier:@"LTSliderViewController"];
+
+    _sliderController.delegate = self;
+    _sliderController.forwardImage = forwardSliderImage;
+    _sliderController.forwardPressedImage = forwardSliderImage;
+    _sliderController.reverseImage = reverseSliderImage;
+    _sliderController.reversePressedImage = reverseSliderImage;
+
+    [_sliderController loadView];
+
+//    _slideToCancel = [[SlideToCancelViewController alloc] init];
+//    _slideToCancel.delegate = self;
+//    _slideToCancel.forwardImage = _forwardSliderImage;
+//    _slideToCancel.reverseImage = reverseSliderImage;
+//    _slideToCancel.tapToBounce = YES;
+//    _slideToCancel.tapToSlide = NO;
 
     _sliderLockButton.hidden = YES;
     _sliderUnlockButton.hidden = YES;
-
-    [_mainContainer addSubview:_slideToCancel.view];
 
     _panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     _rotationRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotation:)];
@@ -271,18 +282,22 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     [super viewDidAppear:animated];
 
     static CGFloat padding = 16.0f;
-
-    CGRect sliderFrame = _mainContainer.bounds;
-    sliderFrame.size.width -= 2*padding;
-    sliderFrame.origin.x += padding;
-    sliderFrame.size.height = _forwardSliderImage.size.height;
+    static CGFloat sliderHeight = 47.0f;
 
     _landscape = UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation);
 
-    sliderFrame.origin.y = CGRectGetHeight(_mainContainer.frame) - _forwardSliderImage.size.height - 32.0f;
+    CGFloat containerWidth = CGRectGetWidth(_mainContainer.frame);
 
-    _slideToCancel.view.frame = sliderFrame;
-    _slideToCancel.enabled = YES;
+    CGFloat containerHeight = CGRectGetHeight(_mainContainer.frame);
+
+    CGRect frame = CGRectMake(padding,
+                              containerHeight - sliderHeight - 2.0f*padding,
+                              containerWidth - 2.0f*padding,
+                              sliderHeight);
+    _sliderController.sliderContainer.frame = frame;
+    _sliderController.reversed = YES;
+
+    [_mainContainer addSubview:_sliderController.sliderContainer];
 
     static NSString *hintKey = @"kLTMultitaskingGesturesHintKey";
 
@@ -296,43 +311,8 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     return UIInterfaceOrientationMaskLandscapeLeft | UIInterfaceOrientationMaskLandscapeRight;
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-    if (_slideToCancel.view.alpha > 0.0f) {
-
-        CGRect sliderFrame = _slideToCancel.view.frame;
-
-        sliderFrame.origin.y = CGRectGetHeight(_mainContainer.frame) - _forwardSliderImage.size.height - 32.0f;
-
-        [UIView
-         animateWithDuration:duration
-         animations:^{
-             _slideToCancel.view.frame = sliderFrame;
-         }];
-    }
-
-}
-
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     _landscape = UIDeviceOrientationIsLandscape((UIDeviceOrientation)fromInterfaceOrientation) == NO;
-
-    BOOL enabled = _slideToCancel.enabled;
-
-    _slideToCancel.enabled = YES;
-
-    _slideToCancel.enabled = enabled;
-
-    if (_slideToCancel.view.alpha > 0.0f) {
-
-        CGRect sliderFrame = _slideToCancel.view.frame;
-
-        sliderFrame.origin.y = CGRectGetHeight(_mainContainer.frame) - _forwardSliderImage.size.height - 32.0f;
-
-        [UIView
-         animateWithDuration:.15f
-         animations:^{
-             _slideToCancel.view.frame = sliderFrame;
-         }];
-    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -923,7 +903,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     _jinGuard = NO;
 }
 
-- (void)sliderReachedForwardPosition {
+- (void)sliderReachedReversePosition {
 
     for (UIGestureRecognizer *gesture in _mainContainer.gestureRecognizers) {
         gesture.enabled = YES;
@@ -933,7 +913,6 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
         gesture.enabled = YES;
     }
 
-    _slideToCancel.reversed = YES;
     _locked = NO;
 
     AudioServicesPlaySystemSound(_tickSoundID);
@@ -949,7 +928,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
      }];
 }
 
-- (void)sliderReachedReversePosition {
+- (void)sliderReachedForwardPosition {
 
     [UIView
      animateWithDuration:.15f
@@ -960,7 +939,6 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
          _addImageContainer.alpha = 0.0f;
          _cancelAddButton.alpha = 0.0f;
      } completion:^(BOOL finished) {
-         _slideToCancel.reversed = NO;
      }];
 
     _locked = YES;
