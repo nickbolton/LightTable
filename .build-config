@@ -1,8 +1,8 @@
 hockeyAPI=8190176620a94d3384cdfbde39f4210e
-macosPath=
-macosInfoPath=
-macosHockeyAppID=
-macosSDK=
+#macosPath=
+#macosInfoPath=
+#macosHockeyAppID=
+#macosSDK=
 iosPath=.
 iosInfoPath=Mimeograph/Mimeograph-Info.plist
 iosHockeyAppID=d240a660118f6969c4c501cf61ab44bc
