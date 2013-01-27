@@ -9,4 +9,4 @@ iosTarget=Mimeograph
 iosInfoPath=Mimeograph/Mimeograph-Info.plist
 iosHockeyAppID=d240a660118f6969c4c501cf61ab44bc
 iosSDK=iphoneos6.0
-iosCodeSignIdentity="iPhone Distribution: Nicholas Bolton"
+iosCodeSignIdentity="iPhone Distribution: Pixelbleed LLC"
