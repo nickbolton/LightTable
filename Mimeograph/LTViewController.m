@@ -25,9 +25,9 @@ NSString * const kLTLastImageTransformCKey = @"last-image-c";
 NSString * const kLTLastImageTransformDKey = @"last-image-d";
 NSString * const kLTLastImageTransformXKey = @"last-image-x";
 NSString * const kLTLastImageTransformYKey = @"last-image-y";
-NSString * const kLTLastImageInvertedKey = @"last-image-inv";
 NSString * const kLTLastImageLockZoomKey = @"last-image-lock-zoom";
 NSString * const kLTLastImageEdgeKey = @"last-image-edge";
+
 CGFloat const kLTFindEdgesLowerThreshold = 20.0f;
 
 @interface LTViewController () <
@@ -48,15 +48,19 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 @property (nonatomic, strong) ALAssetsLibrary *library;
 @property (nonatomic, strong) UIImage *originalImage;
 @property (nonatomic, strong) UIImage *outlinedImage;
-@property (nonatomic, strong) UIImage *invertedOutlinedImage;
 @property (nonatomic) CGPoint touchCenter;
 @property (nonatomic, strong) LTSliderViewController *sliderController;
+@property (nonatomic, strong) NSString *lastOutlinedImagePath;
+
 @end
 
 @implementation LTViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    self.lastOutlinedImagePath =
+    [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/LastOutlinedImage.jpg"];
 
     NSString *path = [[NSBundle mainBundle] pathForResource:@"tick" ofType:@"mp3"];
     
@@ -78,8 +82,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     _selectImageButton,
     _findEdgesButton,
     _removeEdgesButton,
-//    _invertButton,
-//    _invertOffButton,
     _lockZoomButton,
     _unlockZoomButton,
     _libraryButton,
@@ -196,12 +198,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
     _lockZoomButton.hidden = NO;
     _unlockZoomButton.hidden = YES;
 
-    _invertButton.hidden = NO;
-    _invertOffButton.hidden = YES;
-
-    _invertButton.enabled = NO;
-    _invertOffButton.enabled = NO;
-
     if (lastImagePath.length > 0) {
 
         NSURL *assetURL = [NSURL URLWithString:lastImagePath];
@@ -218,7 +214,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
                         UIImage *image = [UIImage imageWithCGImage:iref scale:1.0f orientation:(UIImageOrientation)rep.orientation];;
 
-                        self.imageView.image = image;
                         self.originalImage = image;
 
                         [self setControlsEnabled:YES animate:YES];
@@ -236,26 +231,35 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
                         [[NSUserDefaults standardUserDefaults]
                          boolForKey:kLTLastImageLockZoomKey];
 
-                        BOOL inverted =
-                        [[NSUserDefaults standardUserDefaults]
-                         boolForKey:kLTLastImageInvertedKey];
-
                         _findEdgesButton.hidden = edgeDetectionOn;
                         _removeEdgesButton.hidden = !edgeDetectionOn;
 
                         _lockZoomButton.hidden = lockZoom;
                         _unlockZoomButton.hidden = !lockZoom;
 
-                        _invertButton.hidden = inverted;
-                        _invertOffButton.hidden = !inverted;
-
-                        _invertButton.enabled = edgeDetectionOn;
-                        _invertOffButton.enabled = edgeDetectionOn;
+                        _mainContainer.backgroundColor = [UIColor whiteColor];
 
                         if (edgeDetectionOn) {
-                            [self updateEdgeDetectionImage];
+                            double delayInSeconds = .1f;
+                            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+                            dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+
+                                if ([[NSFileManager defaultManager] fileExistsAtPath:self.lastOutlinedImagePath]) {
+
+                                    NSData *imageData =
+                                    [NSData dataWithContentsOfFile:self.lastOutlinedImagePath];
+                                    
+                                    UIImage *image =
+                                    [UIImage imageWithData:imageData];
+
+                                    self.imageView.image = image;
+
+                                } else {
+                                    [self updateEdgeDetectionImage];
+                                }
+                            });
                         } else {
-                            _mainContainer.backgroundColor = [UIColor whiteColor];
+                            self.imageView.image = image;
                         }
 
                     } else {
@@ -327,16 +331,12 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
     _findEdgesButton.enabled = enabled;
     _removeEdgesButton.enabled = enabled;
-    _invertButton.enabled = enabled;
-    _invertOffButton.enabled = enabled;
     _lockZoomButton.enabled = enabled;
     _unlockZoomButton.enabled = enabled;
 
     void (^executionBlock)(void) = ^{
         _findEdgesButton.alpha = alpha;
         _removeEdgesButton.alpha = alpha;
-        _invertButton.alpha = alpha;
-        _invertOffButton.alpha = alpha;
         _lockZoomButton.alpha = alpha;
         _unlockZoomButton.alpha = alpha;
     };
@@ -353,8 +353,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 - (void)resetImageProperties {
     [[NSUserDefaults standardUserDefaults]
      removeObjectForKey:kLTLastImagePathKey];
-    [[NSUserDefaults standardUserDefaults]
-     removeObjectForKey:kLTLastImageInvertedKey];
     [[NSUserDefaults standardUserDefaults]
      removeObjectForKey:kLTLastImageLockZoomKey];
     [[NSUserDefaults standardUserDefaults]
@@ -374,7 +372,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
              self.originalImage = nil;
              self.outlinedImage = nil;
-             self.invertedOutlinedImage = nil;
 
              _selectImageButton.hidden = NO;
              _clearImageButton.hidden = YES;
@@ -435,12 +432,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
             _imageView.image = self.originalImage;
 
-            _invertButton.hidden = NO;
-            _invertOffButton.hidden = YES;
-
-            [[NSUserDefaults standardUserDefaults]
-             setBool:NO forKey:kLTLastImageInvertedKey];
-
         } else {
 
             // turning on
@@ -456,8 +447,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
             _mainContainer.backgroundColor = [UIColor whiteColor];
         }
 
-        _invertButton.enabled = !edgeDetectionOn;
-        _invertOffButton.enabled = !edgeDetectionOn;
         _findEdgesButton.hidden = !edgeDetectionOn;
         _removeEdgesButton.hidden = edgeDetectionOn;
 
@@ -484,46 +473,6 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
         _unlockZoomButton.hidden = lockZoom;
         
         [_lockZoomButton setNeedsDisplay];
-    }
-}
-
-- (IBAction)invertImage:(id)sender {
-
-    if (_jinGuard == NO && _locked == NO) {
-        BOOL edgeDetectionOn =
-        [[NSUserDefaults standardUserDefaults]
-         boolForKey:kLTLastImageEdgeKey];
-
-        if (edgeDetectionOn) {
-            BOOL inverted =
-            [[NSUserDefaults standardUserDefaults]
-             boolForKey:kLTLastImageInvertedKey];
-
-            inverted = !inverted;
-
-            [[NSUserDefaults standardUserDefaults]
-             setBool:inverted forKey:kLTLastImageInvertedKey];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-
-            _invertButton.hidden = inverted;
-            _invertOffButton.hidden = !inverted;
-
-            if (inverted) {
-                if (_invertedOutlinedImage != nil) {
-                    _imageView.image = _invertedOutlinedImage;
-                    _mainContainer.backgroundColor = [UIColor blackColor];
-                } else {
-                    [self updateEdgeDetectionImage];
-                }
-            } else {
-                if (_outlinedImage != nil) {
-                    _imageView.image = _outlinedImage;
-                    _mainContainer.backgroundColor = [UIColor whiteColor];
-                } else {
-                    [self updateEdgeDetectionImage];
-                }
-            }
-        }
     }
 }
 
@@ -773,41 +722,30 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPopoverContro
 
 - (void)updateEdgeDetectionImage {
 
-    __block UIImage *updatedImage = nil;
-
     MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:_mainContainer];
     hud.labelText = NSLocalizedString(@"Applying Filter...", nil);
 
     [_mainContainer addSubview:hud];
     [hud show:YES];
 
-    BOOL inverted =
-    [[NSUserDefaults standardUserDefaults]
-     boolForKey:kLTLastImageInvertedKey];
+    [[LTEdgeDetector sharedInstance]
+     applyEdgeDetection:_originalImage
+     completion:^(UIImage *resultingImage) {
 
-    float delayInSeconds = .5f;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-    dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(void){
+         dispatch_async(dispatch_get_main_queue(), ^{
 
-        updatedImage =
-        [[LTEdgeDetector sharedInstance]
-         applyEdgeDetection:_originalImage
-         lowThreshold:kLTFindEdgesLowerThreshold
-         inverted:inverted];
+             self.outlinedImage = resultingImage;
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+             _mainContainer.backgroundColor = [UIColor whiteColor];
+             _imageView.image = resultingImage;
 
-            if (inverted) {
-                self.invertedOutlinedImage = updatedImage;
-            } else {
-                self.outlinedImage = updatedImage;
-            }
-            
-            _mainContainer.backgroundColor = inverted ? [UIColor blackColor] : [UIColor whiteColor];
-            _imageView.image = updatedImage;
-            [hud hide:YES];
-        });
-    });
+             NSData *imgData = UIImageJPEGRepresentation(resultingImage, 1);
+
+             [imgData writeToFile:self.lastOutlinedImagePath atomically:YES];
+
+             [hud hide:YES];
+         });
+     }];
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
@@ -891,6 +829,57 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 - (IBAction)cancelAddImage:(id)sender {
 
     [self removeImageSelectionOptions];
+}
+
+- (IBAction)printView:(id)sender {
+
+    MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:_mainContainer];
+    hud.labelText = NSLocalizedString(@"Please wait...", nil);
+
+    [_mainContainer addSubview:hud];
+    [hud show:YES];
+
+    AudioServicesPlaySystemSound(_tickSoundID);
+
+    double delayInSeconds = .1f;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        [self doPrintView];
+        [hud hide:YES];
+    });
+}
+
+- (void)doPrintView {
+
+    UIPrintInteractionController *controller = [UIPrintInteractionController sharedPrintController];
+    if(!controller){
+        NSLog(@"Couldn't get shared UIPrintInteractionController!");
+        return;
+    }
+
+    UIPrintInteractionCompletionHandler completionHandler =
+    ^(UIPrintInteractionController *printController, BOOL completed, NSError *error) {
+        if(!completed && error){
+            NSLog(@"FAILED! due to error in domain %@ with error code %u", error.domain, error.code);
+        }
+    };
+
+    controller.showsPageRange = NO;
+
+    UIPrintInfo *printInfo = [UIPrintInfo printInfo];
+    printInfo.outputType = UIPrintInfoOutputPhoto;
+    printInfo.jobName = NSLocalizedString(@"Mimeograph", nil);
+    controller.printInfo = printInfo;
+
+    // Be sure the page range controls are present for documents of > 1 page.
+    controller.showsPageRange = YES;
+    controller.printingItem = self.imageView.image;
+
+    [controller
+     presentFromRect:self.printButton.bounds
+     inView:self.printButton
+     animated:YES
+     completionHandler:completionHandler];
 }
 
 #pragma mark - SlideToCancelDelegate Conformance
@@ -1020,9 +1009,6 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     _unlockZoomButton.hidden = YES;
     _findEdgesButton.hidden = NO;
     _removeEdgesButton.hidden = YES;
-    _invertButton.hidden = NO;
-    _invertOffButton.hidden = YES;
-    _invertButton.enabled = NO;
 
     [[NSUserDefaults standardUserDefaults]
      removeObjectForKey:kLTLastImageEdgeKey];

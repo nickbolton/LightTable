@@ -7,16 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <opencv2/opencv.hpp>
-
-using namespace cv;
 
 @interface UIImage (Utilities)
-
-- (Mat)cvMat;
-
-+ (UIImage *)imageWithCVMat:(const Mat&)cvMat
-                orientation:(UIImageOrientation)orientation;
 
 - (UIImage *)resizeImageToSize:(CGSize)size;
 

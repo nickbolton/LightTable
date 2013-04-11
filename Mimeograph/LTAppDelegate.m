@@ -11,16 +11,22 @@
 
 NSString * const kLTPencilWarningShownKey = @"warning-shown";
 
+@interface LTAppDelegate() {
+
+    CGFloat _previousBrightness;
+}
+
+@end
+
+
 @implementation LTAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    [[UIScreen mainScreen] setBrightness:1.0f];
-
     BOOL warningShown =
     [[NSUserDefaults standardUserDefaults] boolForKey:kLTPencilWarningShownKey];
 
-    if (warningShown == NO) {
+    if (NO && warningShown == NO) {
 
         UIStoryboard *storyboard =
         [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
@@ -35,6 +41,7 @@ NSString * const kLTPencilWarningShownKey = @"warning-shown";
 }
 							
 - (void)applicationWillResignActive:(UIApplication *)application {
+    [[UIScreen mainScreen] setBrightness:_previousBrightness];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
@@ -44,9 +51,12 @@ NSString * const kLTPencilWarningShownKey = @"warning-shown";
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+    _previousBrightness = [UIScreen mainScreen].brightness;
+    [UIScreen mainScreen].brightness = 1.0f;
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
+    [[UIScreen mainScreen] setBrightness:_previousBrightness];
 }
 
 - (NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {

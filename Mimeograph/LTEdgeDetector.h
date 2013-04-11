@@ -10,8 +10,7 @@
 
 + (LTEdgeDetector *)sharedInstance;
 
-- (UIImage *)applyEdgeDetection:(UIImage *)originalImage
-                   lowThreshold:(CGFloat)lowThreshold
-                       inverted:(BOOL)inverted;
+- (void)applyEdgeDetection:(UIImage *)originalImage
+                completion:(void(^)(UIImage *resultingImage))completionBlock;
 
 @end

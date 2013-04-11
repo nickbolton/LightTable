@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2844" systemVersion="12C60" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12D78" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="2">
     <dependencies>
         <deployment version="1296" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1930"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -119,7 +119,7 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" id="61N-mR-7wJ">
-                                <rect key="frame" x="815" y="16" width="209" height="148"/>
+                                <rect key="frame" x="815" y="16" width="209" height="157"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="OZ5-fX-6g3">
@@ -182,6 +182,22 @@
                                             <action selector="findEdges:" destination="2" eventType="touchUpInside" id="oLn-ub-9O6"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="tailTruncation" id="kfb-LX-3NE" userLabel="Button - Print">
+                                        <rect key="frame" x="0.0" y="110" width="194" height="47"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
+                                        <size key="titleShadowOffset" width="0.0" height="1"/>
+                                        <state key="normal" title="PRINT" image="icon_outline.png" backgroundImage="btn_main.png">
+                                            <color key="titleColor" red="0.1960784314" green="0.20784313730000001" blue="0.21960784310000001" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" red="1" green="1" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="printView:" destination="2" eventType="touchUpInside" id="zEv-6b-NB3"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Tem-0a-miy">
                                         <rect key="frame" x="0.0" y="55" width="194" height="47"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -235,6 +251,7 @@
                         <outlet property="libraryButton" destination="r1d-uz-0rX" id="8U9-t4-hhc"/>
                         <outlet property="lockZoomButton" destination="Tem-0a-miy" id="fz0-Yg-EYE"/>
                         <outlet property="mainContainer" destination="3FQ-Vp-Seg" id="bPr-8v-2CG"/>
+                        <outlet property="printButton" destination="kfb-LX-3NE" id="CG8-Nz-k4G"/>
                         <outlet property="removeEdgesButton" destination="N0y-sO-MT3" id="c5z-Ie-zvR"/>
                         <outlet property="selectImageButton" destination="QKs-pa-V1k" id="kjv-fU-G8K"/>
                         <outlet property="selectionContainer" destination="61N-mR-7wJ" id="3id-ML-TO6"/>
@@ -395,9 +412,11 @@ We cannot be responsible for any damage you might cause to your iPad while using
             <source key="sourceIdentifier" type="project" relativePath="./Classes/LTViewController.h"/>
             <relationships>
                 <relationship kind="action" name="addImage:"/>
+                <relationship kind="action" name="blank:"/>
                 <relationship kind="action" name="cancelAddImage:"/>
                 <relationship kind="action" name="findEdges:"/>
-                <relationship kind="action" name="invertImage:"/>
+                <relationship kind="action" name="print:"/>
+                <relationship kind="action" name="printView:"/>
                 <relationship kind="action" name="selectFromLibrary:"/>
                 <relationship kind="action" name="toggleLockZoom:"/>
                 <relationship kind="action" name="useCamera:"/>
@@ -407,11 +426,10 @@ We cannot be responsible for any damage you might cause to your iPad while using
                 <relationship kind="outlet" name="clearImageButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="findEdgesButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="invertButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="invertOffButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="libraryButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="lockZoomButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="mainContainer" candidateClass="UIView"/>
+                <relationship kind="outlet" name="printButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="removeEdgesButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="selectImageButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="selectionContainer" candidateClass="UIView"/>

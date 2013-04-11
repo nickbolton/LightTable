@@ -18,22 +18,21 @@
 @property (nonatomic, strong) IBOutlet UIButton *libraryButton;
 @property (nonatomic, strong) IBOutlet UIButton *cancelAddButton;
 @property (nonatomic, strong) IBOutlet UIButton *cameraButton;
-@property (nonatomic, strong) IBOutlet UIButton *invertButton;
-@property (nonatomic, strong) IBOutlet UIButton *invertOffButton;
 @property (nonatomic, strong) IBOutlet UIButton *findEdgesButton;
 @property (nonatomic, strong) IBOutlet UIButton *removeEdgesButton;
 @property (nonatomic, strong) IBOutlet UIButton *lockZoomButton;
 @property (nonatomic, strong) IBOutlet UIButton *unlockZoomButton;
 @property (nonatomic, strong) IBOutlet UIButton *sliderLockButton;
 @property (nonatomic, strong) IBOutlet UIButton *sliderUnlockButton;
+@property (nonatomic, strong) IBOutlet UIButton *printButton;
 @property (nonatomic, strong) IBOutlet UIImageView *imageView;
 
 - (IBAction)addImage:(id)sender;
 - (IBAction)selectFromLibrary:(id)sender;
 - (IBAction)useCamera:(id)sender;
 - (IBAction)findEdges:(id)sender;
-- (IBAction)invertImage:(id)sender;
 - (IBAction)toggleLockZoom:(id)sender;
 - (IBAction)cancelAddImage:(id)sender;
+- (IBAction)printView:(id)sender;
 
 @end
