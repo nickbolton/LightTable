@@ -38,7 +38,6 @@
 		FE23186C16A6381900842EF1 /* LTAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FE23183416A6381900842EF1 /* LTAppDelegate.m */; };
 		FE23186D16A6381900842EF1 /* LTEdgeDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FE23183616A6381900842EF1 /* LTEdgeDetector.m */; };
 		FE23186E16A6381900842EF1 /* LTImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = FE23183816A6381900842EF1 /* LTImageView.m */; };
-		FE23186F16A6381900842EF1 /* LTTracingWarningViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE23183A16A6381900842EF1 /* LTTracingWarningViewController.m */; };
 		FE23187016A6381900842EF1 /* LTView.m in Sources */ = {isa = PBXBuildFile; fileRef = FE23183C16A6381900842EF1 /* LTView.m */; };
 		FE23187116A6381900842EF1 /* LTViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FE23183E16A6381900842EF1 /* LTViewController.m */; };
 		FE23187216A6381900842EF1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FE23183F16A6381900842EF1 /* main.m */; };
@@ -271,8 +270,6 @@
 		FE23183616A6381900842EF1 /* LTEdgeDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LTEdgeDetector.m; sourceTree = "<group>"; };
 		FE23183716A6381900842EF1 /* LTImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LTImageView.h; sourceTree = "<group>"; };
 		FE23183816A6381900842EF1 /* LTImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LTImageView.m; sourceTree = "<group>"; };
-		FE23183916A6381900842EF1 /* LTTracingWarningViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LTTracingWarningViewController.h; sourceTree = "<group>"; };
-		FE23183A16A6381900842EF1 /* LTTracingWarningViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LTTracingWarningViewController.m; sourceTree = "<group>"; };
 		FE23183B16A6381900842EF1 /* LTView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LTView.h; sourceTree = "<group>"; };
 		FE23183C16A6381900842EF1 /* LTView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LTView.m; sourceTree = "<group>"; };
 		FE23183D16A6381900842EF1 /* LTViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LTViewController.h; sourceTree = "<group>"; };
@@ -769,8 +766,6 @@
 				FE23183616A6381900842EF1 /* LTEdgeDetector.m */,
 				FE23183716A6381900842EF1 /* LTImageView.h */,
 				FE23183816A6381900842EF1 /* LTImageView.m */,
-				FE23183916A6381900842EF1 /* LTTracingWarningViewController.h */,
-				FE23183A16A6381900842EF1 /* LTTracingWarningViewController.m */,
 				FE23183B16A6381900842EF1 /* LTView.h */,
 				FE23183C16A6381900842EF1 /* LTView.m */,
 				FE23183D16A6381900842EF1 /* LTViewController.h */,
@@ -1191,6 +1186,11 @@
 				CLASSPREFIX = LT;
 				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = Pixelbleed;
+				TargetAttributes = {
+					FE9DBCBD16794E73009E5B75 = {
+						DevelopmentTeam = 9LEWA8UFPT;
+					};
+				};
 			};
 			buildConfigurationList = FE9DBCB816794E72009E5B75 /* Build configuration list for PBXProject "Mimeograph" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1271,7 +1271,6 @@
 				FE23186C16A6381900842EF1 /* LTAppDelegate.m in Sources */,
 				FE23186D16A6381900842EF1 /* LTEdgeDetector.m in Sources */,
 				FE23186E16A6381900842EF1 /* LTImageView.m in Sources */,
-				FE23186F16A6381900842EF1 /* LTTracingWarningViewController.m in Sources */,
 				FE23187016A6381900842EF1 /* LTView.m in Sources */,
 				FE23187116A6381900842EF1 /* LTViewController.m in Sources */,
 				FE23187216A6381900842EF1 /* main.m in Sources */,
@@ -1474,8 +1473,8 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Nick Bolton (S2K3W9UKS2)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Nick Bolton (S2K3W9UKS2)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1493,7 +1492,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-lstdc++";
 				OTHER_LDFLAGS = "";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "B76778F2-94DE-4ED9-9A11-8FBF50B5C5B5";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -1508,8 +1507,8 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Nicholas Bolton";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Nicholas Bolton (9LEWA8UFPT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Nicholas Bolton (9LEWA8UFPT)";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1519,7 +1518,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_CFLAGS = "-lstdc++";
 				OTHER_LDFLAGS = "";
-				PROVISIONING_PROFILE = "314248EE-3B18-4C9B-A87F-7FDB3A02D37E";
+				PROVISIONING_PROFILE = "BEE82001-1344-4D40-8AFF-A9D2E1C85755";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
@@ -1549,7 +1548,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Nicholas Bolton";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Externals\"",
